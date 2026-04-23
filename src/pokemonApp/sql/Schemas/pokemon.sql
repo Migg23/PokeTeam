@@ -1,0 +1,2 @@
+--this will create the pokemon schema for the project and ensure everything can be tied
+--this might be changed because we might create schemas for each one of us so we dont mess with each others data

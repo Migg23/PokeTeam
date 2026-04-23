@@ -1,0 +1,1 @@
+#here would be the model aka the object representation of the pokemon table

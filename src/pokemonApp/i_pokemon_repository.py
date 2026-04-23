@@ -1,0 +1,1 @@
+#this is an interface for the pokemon repository. it will be used to define the methods that will be used to interact with the data layer 

@@ -1,0 +1,1 @@
+--this will be the creation of the ACTUAL pokemon table 

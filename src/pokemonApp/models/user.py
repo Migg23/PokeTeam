@@ -1,0 +1,1 @@
+#this here is an example of a table from our schema. it is an object that we will use to store data from the database
