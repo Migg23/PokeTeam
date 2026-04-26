@@ -1,0 +1,15 @@
+
+from abc import ABC, abstractmethod
+class IPokemonSpeciesRepository(ABC):
+    @abstractmethod
+    def create_pokemon_species(self, pokemon_species):
+        pass
+
+    @abstractmethod
+    def get_pokemon_species_by_id(self, pokemon_species_id):
+        pass
+
+    @abstractmethod
+    def get_pokemon_species_by_name(self, name):
+        pass
+
