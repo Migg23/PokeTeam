@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeTeam Builder</title>
+    <style>
+        /* Base Layout */
+        body { font-family: sans-serif; margin: 0; padding: 20px; background-color: #f4f4f9; }
+        h2 { border-bottom: 2px solid #ccc; padding-bottom: 5px; }
+        
+        /* Main View Split */
+        #builder-view { display: flex; gap: 20px; height: 80vh; }
+        
+        /* Left Panel: Pokedex */
+        .left-panel { flex: 1; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        .pokedex-scroll { flex: 1; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: #fafafa; }
+        .pokemon-card { background: #fff; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; cursor: grab; border-radius: 4px; text-align: center; font-weight: bold; }
+        .pokemon-card:active { cursor: grabbing; }
+
+        /* Right Panel: Team Slots */
+        .right-panel { flex: 2; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .team-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .team-slot { border: 2px dashed #bbb; border-radius: 8px; padding: 15px; background: #fafafa; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 120px; transition: background 0.2s; }
+        .team-slot.drag-over { background: #e0f7fa; border-color: #00bcd4; }
+        .slot-content { font-size: 18px; color: #333; margin-bottom: 15px; font-weight: bold; }
+        .slot-details { font-size: 12px; color: #666; margin-bottom: 10px; text-align: center; }
+        .edit-btn { padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .edit-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* Edit View */
+        #edit-view { display: none; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        
+        .top-edit-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; background: #eee; padding: 15px; border-radius: 4px; margin-bottom: 20px;}
+        .button-group button { padding: 10px 20px; margin-right: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .save-btn { background: #28a745; color: white; }
+        .cancel-btn { background: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+
+    <div id="builder-view">
+        
+        <div class="left-panel">
+            <h2>Pokedex</h2>
+            <div class="pokedex-scroll">
+                <div class="pokemon-card" draggable="true" ondragstart="drag(event)" id="poke1" 
+                    data-name="Charizard" data-type1="Fire" data-type2="Flying" data-nature="Timid" data-ability="Blaze"
+                    data-hp="78" data-atk="84" data-def="78" data-spatk="109" data-spdef="85" data-speed="100">
+                    Charizard
+                </div>
+                <div class="pokemon-card" draggable="true" ondragstart="drag(event)" id="poke2" 
+                    data-name="Gengar" data-type1="Ghost" data-type2="Poison" data-nature="Modest" data-ability="Cursed Body"
+                    data-hp="60" data-atk="65" data-def="60" data-spatk="130" data-spdef="75" data-speed="110">
+                    Gengar
+                </div>
+                <div class="pokemon-card" draggable="true" ondragstart="drag(event)" id="poke3" 
+                    data-name="Garchomp" data-type1="Dragon" data-type2="Ground" data-nature="Jolly" data-ability="Sand Veil"
+                    data-hp="108" data-atk="130" data-def="95" data-spatk="80" data-spdef="85" data-speed="102">
+                    Garchomp
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <h2>Team #1</h2>
+            <div class="team-grid">
+                <div class="team-slot" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <div class="slot-content" style="color:#777;">Empty Slot</div>
+                    <div class="slot-details"></div>
+                    <button class="edit-btn" disabled onclick="openEdit(this)">Edit Pokémon</button>
+                </div>
+                <div class="team-slot" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="slot-content" style="color:#777;">Empty Slot</div><div class="slot-details"></div><button class="edit-btn" disabled onclick="openEdit(this)">Edit Pokémon</button></div>
+                <div class="team-slot" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="slot-content" style="color:#777;">Empty Slot</div><div class="slot-details"></div><button class="edit-btn" disabled onclick="openEdit(this)">Edit Pokémon</button></div>
+                <div class="team-slot" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="slot-content" style="color:#777;">Empty Slot</div><div class="slot-details"></div><button class="edit-btn" disabled onclick="openEdit(this)">Edit Pokémon</button></div>
+                <div class="team-slot" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="slot-content" style="color:#777;">Empty Slot</div><div class="slot-details"></div><button class="edit-btn" disabled onclick="openEdit(this)">Edit Pokémon</button></div>
+                <div class="team-slot" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="slot-content" style="color:#777;">Empty Slot</div><div class="slot-details"></div><button class="edit-btn" disabled onclick="openEdit(this)">Edit Pokémon</button></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="edit-view">
+        <h2 id="edit-title">Edit Pokémon</h2>
+        
+        <div class="top-edit-grid">
+            <div class="form-group">
+                <label>Level</label>
+                <input type="number" id="edit-level" value="50" min="1" max="100">
+            </div>
+            <div class="form-group">
+                <label>Ability</label>
+                <input type="text" id="edit-ability" placeholder="e.g., Levitate">
+            </div>
+            
+            <div class="form-group">
+                <label>Type 1</label>
+                <select id="edit-type1">
+                    <option value="None">None</option>
+                    <option value="Normal">Normal</option>
+                    <option value="Fire">Fire</option>
+                    <option value="Water">Water</option>
+                    <option value="Grass">Grass</option>
+                    <option value="Dragon">Dragon</option>
+                    <option value="Ghost">Ghost</option>
+                    <option value="Poison">Poison</option>
+                    <option value="Ground">Ground</option>
+                    <option value="Flying">Flying</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Type 2</label>
+                <select id="edit-type2">
+                    <option value="None">None</option>
+                    <option value="Normal">Normal</option>
+                    <option value="Fire">Fire</option>
+                    <option value="Water">Water</option>
+                    <option value="Grass">Grass</option>
+                    <option value="Dragon">Dragon</option>
+                    <option value="Ghost">Ghost</option>
+                    <option value="Poison">Poison</option>
+                    <option value="Ground">Ground</option>
+                    <option value="Flying">Flying</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Nature</label>
+                <select id="edit-nature">
+                    <option value="Adamant">Adamant (+Atk, -SpAtk)</option>
+                    <option value="Jolly">Jolly (+Spe, -SpAtk)</option>
+                    <option value="Timid">Timid (+Spe, -Atk)</option>
+                    <option value="Modest">Modest (+SpAtk, -Atk)</option>
+                    <option value="Bold">Bold (+Def, -Atk)</option>
+                    <option value="Calm">Calm (+SpDef, -Atk)</option>
+                </select>
+            </div>
+        </div>
+
+        <h3>Base Stats</h3>
+        <div class="stats-grid">
+            <div class="form-group">
+                <label>HP</label>
+                <input type="number" id="stat-hp" min="1" max="255">
+            </div>
+            <div class="form-group">
+                <label>Attack</label>
+                <input type="number" id="stat-atk" min="1" max="255">
+            </div>
+            <div class="form-group">
+                <label>Defense</label>
+                <input type="number" id="stat-def" min="1" max="255">
+            </div>
+            <div class="form-group">
+                <label>Sp. Atk</label>
+                <input type="number" id="stat-spatk" min="1" max="255">
+            </div>
+            <div class="form-group">
+                <label>Sp. Def</label>
+                <input type="number" id="stat-spdef" min="1" max="255">
+            </div>
+            <div class="form-group">
+                <label>Speed</label>
+                <input type="number" id="stat-speed" min="1" max="255">
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="save-btn" onclick="saveEdit()">Save to Team</button>
+            <button class="cancel-btn" onclick="closeEdit()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        let currentEditingSlot = null;
+
+        // 1. Drag and Drop Logic
+        function allowDrop(ev) {
+            ev.preventDefault();
+            ev.currentTarget.classList.add('drag-over');
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            const slot = ev.currentTarget;
+            slot.classList.remove('drag-over');
+
+            const dataId = ev.dataTransfer.getData("text");
+            const draggedElement = document.getElementById(dataId);
+
+            // Populate the slot UI
+            const contentDiv = slot.querySelector('.slot-content');
+            contentDiv.textContent = draggedElement.dataset.name;
+            contentDiv.style.color = '#333';
+
+            // Store initial DB schema data on the slot
+            slot.dataset.name = draggedElement.dataset.name;
+            slot.dataset.level = "50"; // Default
+            slot.dataset.ability = draggedElement.dataset.ability;
+            slot.dataset.type1 = draggedElement.dataset.type1;
+            slot.dataset.type2 = draggedElement.dataset.type2 || "None";
+            slot.dataset.nature = draggedElement.dataset.nature;
+            
+            slot.dataset.hp = draggedElement.dataset.hp;
+            slot.dataset.atk = draggedElement.dataset.atk;
+            slot.dataset.def = draggedElement.dataset.def;
+            slot.dataset.spatk = draggedElement.dataset.spatk;
+            slot.dataset.spdef = draggedElement.dataset.spdef;
+            slot.dataset.speed = draggedElement.dataset.speed;
+
+            updateSlotDetailsUI(slot);
+
+            // Enable the edit button
+            const btn = slot.querySelector('.edit-btn');
+            btn.disabled = false;
+        }
+
+        document.querySelectorAll('.team-slot').forEach(slot => {
+            slot.addEventListener('dragleave', function() {
+                this.classList.remove('drag-over');
+            });
+        });
+
+        // Helper to update the text under the pokemon name
+        function updateSlotDetailsUI(slot) {
+            const detailsDiv = slot.querySelector('.slot-details');
+            detailsDiv.textContent = `Lvl ${slot.dataset.level} | ${slot.dataset.nature} | ${slot.dataset.type1}`;
+            if(slot.dataset.type2 && slot.dataset.type2 !== "None") {
+                detailsDiv.textContent += `/${slot.dataset.type2}`;
+            }
+        }
+
+        // 2. Edit Menu Logic
+        function openEdit(buttonElement) {
+            const slot = buttonElement.parentElement;
+            currentEditingSlot = slot;
+
+            document.getElementById('builder-view').style.display = 'none';
+            document.getElementById('edit-view').style.display = 'block';
+
+            // Populate text/dropdowns
+            document.getElementById('edit-title').textContent = "Edit " + slot.dataset.name;
+            document.getElementById('edit-level').value = slot.dataset.level;
+            document.getElementById('edit-ability').value = slot.dataset.ability;
+            
+            // Set dropdown values safely (if they exist in the options)
+            const type1Select = document.getElementById('edit-type1');
+            const type2Select = document.getElementById('edit-type2');
+            const natureSelect = document.getElementById('edit-nature');
+            
+            if([...type1Select.options].some(o => o.value === slot.dataset.type1)) type1Select.value = slot.dataset.type1;
+            if([...type2Select.options].some(o => o.value === slot.dataset.type2)) type2Select.value = slot.dataset.type2;
+            if([...natureSelect.options].some(o => o.value.startsWith(slot.dataset.nature))) {
+                 // Match just the name part before the parenthesis
+                 let option = [...natureSelect.options].find(o => o.value.startsWith(slot.dataset.nature));
+                 if(option) natureSelect.value = option.value;
+            }
+
+            // Populate number inputs for stats
+            document.getElementById('stat-hp').value = slot.dataset.hp;
+            document.getElementById('stat-atk').value = slot.dataset.atk;
+            document.getElementById('stat-def').value = slot.dataset.def;
+            document.getElementById('stat-spatk').value = slot.dataset.spatk;
+            document.getElementById('stat-spdef').value = slot.dataset.spdef;
+            document.getElementById('stat-speed').value = slot.dataset.speed;
+        }
+
+        function saveEdit() {
+            if (!currentEditingSlot) return;
+
+            // Save text/dropdowns back to the slot dataset
+            currentEditingSlot.dataset.level = document.getElementById('edit-level').value;
+            currentEditingSlot.dataset.ability = document.getElementById('edit-ability').value;
+            currentEditingSlot.dataset.type1 = document.getElementById('edit-type1').value;
+            currentEditingSlot.dataset.type2 = document.getElementById('edit-type2').value;
+            
+            // Extract just the nature name (e.g. "Adamant" from "Adamant (+Atk, -SpAtk)")
+            const rawNature = document.getElementById('edit-nature').value;
+            currentEditingSlot.dataset.nature = rawNature.split(' ')[0];
+
+            // Save stats back to the slot dataset
+            currentEditingSlot.dataset.hp = document.getElementById('stat-hp').value;
+            currentEditingSlot.dataset.atk = document.getElementById('stat-atk').value;
+            currentEditingSlot.dataset.def = document.getElementById('stat-def').value;
+            currentEditingSlot.dataset.spatk = document.getElementById('stat-spatk').value;
+            currentEditingSlot.dataset.spdef = document.getElementById('stat-spdef').value;
+            currentEditingSlot.dataset.speed = document.getElementById('stat-speed').value;
+
+            // Update the UI card to reflect changes
+            updateSlotDetailsUI(currentEditingSlot);
+
+            closeEdit();
+        }
+
+        function closeEdit() {
+            document.getElementById('edit-view').style.display = 'none';
+            document.getElementById('builder-view').style.display = 'flex';
+            currentEditingSlot = null;
+        }
+    </script>
+</body>
+</html>
