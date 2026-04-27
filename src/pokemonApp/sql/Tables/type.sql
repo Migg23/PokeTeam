@@ -1,0 +1,11 @@
+USE PokemonDB;
+GO
+
+DROP TABLE IF EXISTS pokemon.Type;
+GO
+
+CREATE TABLE pokemon.Type (
+    type_Id INT IDENTITY(1,1) PRIMARY KEY,
+    name NVARCHAR(30) NOT NULL UNIQUE
+);
+GO
