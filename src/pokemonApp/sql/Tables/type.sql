@@ -1,8 +1,8 @@
 DROP TABLE IF EXISTS pokemon.Type;
 GO
 
-CREATE TABLE pokemon.Type (
+CREATE TABLE pokemon.[Type] (
     TypeId INT IDENTITY(1,1) PRIMARY KEY,
-    Name NVARCHAR(30) NOT NULL UNIQUE
+    [Name] NVARCHAR(30) NOT NULL UNIQUE
 );
 GO
