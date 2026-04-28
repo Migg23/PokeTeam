@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class ITeamMemberRepository(ABC):
     @abstractmethod
-    def create_team_member(self):
+    def create_team_member(self, teamMember):
         pass
 
     @abstractmethod
@@ -11,7 +11,7 @@ class ITeamMemberRepository(ABC):
         pass
 
     @abstractmethod
-    def update_team_member(self,member_Id):
+    def update_team_member(self,member_Id, pokedex_Id , team_number):
         pass
 
     @abstractmethod

@@ -3,19 +3,19 @@ from abc import ABC, abstractmethod
 
 class ITeamRepository(ABC):
     @abstractmethod
-    def get_team_with_teamId(self,team):
+    def get_team_with_teamId(self,team_Id):
         pass
 
     @abstractmethod
-    def get_team_with_userId(self,userId):
+    def get_team_with_userId(self,user_Id):
         pass
 
     @abstractmethod
-    def delete_team(self,team_Id):
+    def delete_team(self,team):
         pass
 
     @abstractmethod
-    def create_team(self,team_Id):
+    def create_team(self,team):
         pass
 
     

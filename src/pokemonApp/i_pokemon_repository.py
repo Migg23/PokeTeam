@@ -4,7 +4,7 @@ from abc import ABC,abstractmethod
 
 class IPokemonRepository(ABC):
     @abstractmethod
-    def create_pokemon(self):
+    def create_pokemon(self , pokemon):
         pass
 
     @abstractmethod
@@ -16,8 +16,5 @@ class IPokemonRepository(ABC):
         pass
 
     @abstractmethod
-    def update_pokemon_modifiers(self,member_Id,level,nature,ability):
+    def update_pokemon_modifiers(self,pokemon):
         pass
-
-        
-    
