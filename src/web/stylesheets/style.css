@@ -1,0 +1,15 @@
+:root {
+  --font-size: 16px;
+  --background: #ffffff;
+  --foreground: oklch(0.145 0 0);
+  --primary: #030213;
+  --radius: 0.625rem;
+  /* ... (You can paste the rest of the :root variables from theme.css here) ... */
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: sans-serif;
+  margin: 0;
+}
