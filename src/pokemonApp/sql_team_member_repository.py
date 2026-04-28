@@ -14,7 +14,7 @@ class SqlTeamMember(ITeamMemberRepository):
             VALUES(%s,%s,%s)
         """
 
-        params = {"TeamId" : teamMember.team_Id, "PokedexId" : teamMember.pokedex_Id , "TeamNumber" : teamMember.team_Number}
+        params = {"TeamId" : teamMember.team_Id, "PokedexId" : teamMember.pokedex_Id , "TeamNumber" : teamMember.team_number}
 
         with self.executor.transaction_scope() as connection:
             self.executor.execute_query(sql,connection,params)

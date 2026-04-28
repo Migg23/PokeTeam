@@ -90,7 +90,7 @@ class SqlUserRepository(IUserRepository):
             WHERE U.UserId = %s
         """
 
-        params = {"UserId": user_Id, "Wins": wins,"Losses": losses}
+        params = {"Wins": wins, "Losses": losses, "UserId": user_Id}
 
         with self.executor.transaction_scope() as connection:
             self.executor.execute_query(sql,connection, params)
@@ -105,7 +105,8 @@ class SqlUserRepository(IUserRepository):
             DELETE FROM {self.executor.schema}.[User]
             WHERE UserId = %s
         """
-        params = {"UserId" : user.user_id}
+        user_id = user.user_id if hasattr(user, "user_id") else user
+        params = {"UserId" : user_id}
         with self.executor.transaction_scope() as connection:
             self.executor.execute_query(sql, connection, params)
         
