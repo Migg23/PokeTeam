@@ -33,7 +33,7 @@ class Pokemon_Species:
     
     @property
     def get_species_name(self):
-        return self.get_species_name
+        return self.species_name
     
     @property
     def get_rarity(self):
