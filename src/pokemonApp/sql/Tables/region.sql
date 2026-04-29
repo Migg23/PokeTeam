@@ -1,8 +1,0 @@
-DROP TABLE IF EXISTS {{SCHEMA}}.Region;
-GO
-
-CREATE TABLE {{SCHEMA}}.Region (
-    RegionId INT IDENTITY(1,1) PRIMARY KEY,
-    RegionName NVARCHAR(50) NOT NULL
-);
-GO
