@@ -1,15 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
+
 :root {
   --font-size: 16px;
   --background: #ffffff;
-  --foreground: oklch(0.145 0 0);
+  --foreground: #030213;
   --primary: #030213;
   --radius: 0.625rem;
-  /* ... (You can paste the rest of the :root variables from theme.css here) ... */
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: sans-serif;
+  font-family: 'Inter', sans-serif;
   margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Webkit Scrollbar for the Pokedex and Modal */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
+}
+
+/* Hide number input arrows for cleaner stat boxes */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
 }

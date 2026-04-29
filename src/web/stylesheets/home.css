@@ -37,3 +37,15 @@ body {
 .team-section h2 {
     color: #007bff;
 }
+
+.view-teams-button {
+    display: inline-block;
+    margin: 20px;
+    padding: 15px 30px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
