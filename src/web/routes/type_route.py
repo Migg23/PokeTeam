@@ -1,38 +1,27 @@
 from flask import Blueprint
-
 from src.data_access.sql_command_executor import SqlCommandExecutor
 from src.pokemonApp.models.type import Type
 from src.pokemonApp.sql_type_repository import SqlTypeRepository
-
 
 type_routes = Blueprint("type_routes", __name__)
 
 executor = SqlCommandExecutor()
 type_repo = SqlTypeRepository(executor)
 
-
-def serialize_type(the_type: Type) -> dict:
+def serialize_type(t: Type) -> dict:
     return {
-        "typeId": the_type.type_Id,
-        "name": the_type.name,
+        "typeId": t.TypeId,
+        "name": t.Name,
     }
-
 
 @type_routes.route("/types", methods=["GET"])
 def get_all_types():
     types = type_repo.get_all_types()
-
-    if not types:
-        return []
-
-    return [serialize_type(the_type) for the_type in types]
-
+    return [serialize_type(t) for t in types] if types else []
 
 @type_routes.route("/types/<int:type_id>", methods=["GET"])
 def get_type_by_id(type_id):
-    the_type = type_repo.get_type_by_Id(type_id)
-
-    if the_type is None:
+    t = type_repo.get_type_by_id(type_id)
+    if t is None:
         return {"message": "Type not found"}, 404
-
-    return serialize_type(the_type)
+    return serialize_type(t)
