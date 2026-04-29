@@ -11,13 +11,20 @@ class SqlTeamMember(ITeamMemberRepository):
     def create_team_member(self, teamMember):
         sql = f"""
             INSERT INTO {self.executor.schema}.TeamMember(TeamId , PokedexId, TeamNumber)
-            VALUES(%s,%s,%s)
+            VALUES(%s,%s,%s);
+            SELECT CAST(SCOPE_IDENTITY() AS INT) AS MemberId
         """
 
         params = {"TeamId" : teamMember.team_Id, "PokedexId" : teamMember.pokedex_Id , "TeamNumber" : teamMember.team_number}
 
         with self.executor.transaction_scope() as connection:
-            self.executor.execute_query(sql,connection,params)
+            temp = self.executor.execute_query(sql,connection,params)
+            rows_returned = self.executor.get_all_rows(temp)
+
+        if not rows_returned:
+            return None
+
+        return self.get_team_member_by_id(rows_returned[0]["MemberId"])
     
 
 
@@ -46,6 +53,30 @@ class SqlTeamMember(ITeamMemberRepository):
             teamMembers.append(Team_Member(member_Id = row["MemberId"] , team_id = row["TeamId"] , pokedex_Id = row["PokedexId"] , team_number= row["TeamNumber"]))
 
         return teamMembers
+
+    def get_team_member_by_id(self, member_Id):
+        sql = f"""
+            SELECT *
+            FROM {self.executor.schema}.TeamMember TM
+            WHERE TM.MemberId = %s
+        """
+
+        params = {"MemberId": member_Id}
+
+        with self.executor.transaction_scope() as connection:
+            temp = self.executor.execute_query(sql, connection, params)
+            rows_returned = self.executor.get_all_rows(temp)
+
+        if not rows_returned:
+            return None
+
+        row = rows_returned[0]
+        return Team_Member(
+            member_Id=row["MemberId"],
+            team_id=row["TeamId"],
+            pokedex_Id=row["PokedexId"],
+            team_number=row["TeamNumber"],
+        )
     
     def delete_team_member(self, member_Id):
         sql = f"""

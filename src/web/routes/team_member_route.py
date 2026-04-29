@@ -44,11 +44,11 @@ def create_team_member(team_id):
         pokedex_Id=pokedex_id,
         team_number=team_number,
     )
-    team_member_repo.create_team_member(team_member)
+    created_team_member = team_member_repo.create_team_member(team_member)
 
     return {
         "message": "Team member created successfully",
-        "teamMember": serialize_team_member(team_member),
+        "teamMember": serialize_team_member(created_team_member),
     }, 201
 
 

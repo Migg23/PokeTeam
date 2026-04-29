@@ -6,11 +6,21 @@ class SqlTypeRepository(ITypeRepository):
     def __init__(self , executor):
         self.executor = executor
     
+    def create_type(self, the_type):
+        sql = f"""
+            INSERT INTO {self.executor.schema}.[Type] (Name)
+            VALUES (%s)
+        """
+
+        params = {"Name": the_type.name}
+
+        with self.executor.transaction_scope() as connection:
+            self.executor.execute_query(sql, connection, params)
 
     def get_all_types(self):
         sql = f"""
             SELECT *
-            FROM {self.executor.schema}.Type T
+            FROM {self.executor.schema}.[Type] T
         """
 
         with self.executor.transaction_scope() as connection:
@@ -35,7 +45,7 @@ class SqlTypeRepository(ITypeRepository):
     def get_type_by_Id(self, type_Id):
         sql = f"""
             SELECT *
-            FROM {self.executor.schema}.Type T
+            FROM {self.executor.schema}.[Type] T
             WHERE T.TypeId = %s
         """
 
@@ -53,3 +63,22 @@ class SqlTypeRepository(ITypeRepository):
         row = rows_returned[0]
 
         return(Type(type_Id=row["TypeId"] , name= row["Name"]))
+
+    def get_type_by_name(self, type_name):
+        sql = f"""
+            SELECT *
+            FROM {self.executor.schema}.[Type] T
+            WHERE LOWER(T.Name) = LOWER(%s)
+        """
+
+        params = {"Name": type_name}
+
+        with self.executor.transaction_scope() as connection:
+            temp = self.executor.execute_query(sql, connection, params)
+            rows_returned = self.executor.get_all_rows(temp)
+
+        if not rows_returned:
+            return None
+
+        row = rows_returned[0]
+        return Type(type_Id=row["TypeId"], name=row["Name"])

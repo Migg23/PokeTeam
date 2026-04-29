@@ -5,6 +5,16 @@ class SqlGenerationRepository(IGenerationRepository):
     def __init__(self , executor):
         self.executor = executor
     
+    def create_generation(self, generation):
+        sql = f"""
+            INSERT INTO {self.executor.schema}.Generation (RegionId, GenName)
+            VALUES (%s, %s)
+        """
+
+        params = {"RegionId": generation.region_Id, "GenName": generation.gen_Name}
+
+        with self.executor.transaction_scope() as connection:
+            self.executor.execute_query(sql, connection, params)
 
     def get_all_generations(self):
         sql = f"""
@@ -36,7 +46,7 @@ class SqlGenerationRepository(IGenerationRepository):
             WHERE G.GenId = %s
         """
 
-        params = {"GenerationId" : gneration_Id}
+        params = {"GenId" : gneration_Id}
 
         with self.executor.transaction_scope() as connection:
             temp = self.executor.execute_query(sql,connection,params)
@@ -73,6 +83,25 @@ class SqlGenerationRepository(IGenerationRepository):
             gens.append(Generation(gen_Id=row["GenId"] , region_Id=row["RegionId"], gen_Name=row["GenName"]))
 
         return(gens)
+
+    def get_generation_by_name(self, generation_name):
+        sql = f"""
+            SELECT *
+            FROM {self.executor.schema}.Generation G
+            WHERE LOWER(G.GenName) = LOWER(%s)
+        """
+
+        params = {"GenName": generation_name}
+
+        with self.executor.transaction_scope() as connection:
+            temp = self.executor.execute_query(sql, connection, params)
+            rows_received = self.executor.get_all_rows(temp)
+
+        if not rows_received:
+            return None
+
+        row = rows_received[0]
+        return Generation(gen_Id=row["GenId"], region_Id=row["RegionId"], gen_Name=row["GenName"])
     
 
 

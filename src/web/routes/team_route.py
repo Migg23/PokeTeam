@@ -46,8 +46,8 @@ def create_team(user_id):
     if not team_name:
         return {"message": "teamName is required"}, 400
 
-    created_team = Team(team_Id=None, user_Id=user_id, team_name=team_name)
-    teams_repo.create_team(created_team)
+    team = Team(team_Id=None, user_Id=user_id, team_name=team_name)
+    created_team = teams_repo.create_team(team)
 
     return {
         "message": "Team created successfully",

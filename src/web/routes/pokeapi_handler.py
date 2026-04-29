@@ -1,7 +1,10 @@
 import json
 from urllib import error, parse, request
 
+from src.pokemonApp.models.generation import Generation
 from src.pokemonApp.models.pokemon_species import Pokemon_Species
+from src.pokemonApp.models.region import Region
+from src.pokemonApp.models.type import Type
 
 
 class PokeApiHandler:
@@ -40,21 +43,46 @@ class PokeApiHandler:
         "careful": ("spdef", "spatk"),
     }
 
-    def __init__(self, executor, pokemon_species_repo):
-        self.executor = executor
+    def __init__(self, pokemon_species_repo, type_repo, region_repo, generation_repo):
         self.pokemon_species_repo = pokemon_species_repo
+        self.type_repo = type_repo
+        self.region_repo = region_repo
+        self.generation_repo = generation_repo
 
-    def ensure_species(self, pokemon_name: str):
+    def get_species_preview_data(self, pokemon_name: str):
         normalized_name = self._normalize_name(pokemon_name)
+        pokemon_payload = self._fetch_json(f"{self.BASE_URL}/pokemon/{parse.quote(normalized_name.lower())}")
+        pokemon_species = self._get_or_create_species(normalized_name, pokemon_payload)
+        ability_options = self._extract_abilities(pokemon_payload)
+
+        return {
+            "species": pokemon_species,
+            "abilityOptions": ability_options,
+        }
+
+    def validate_ability_for_species(self, pokemon_name: str, ability: str):
+        preview_data = self.get_species_preview_data(pokemon_name)
+        normalized_ability = self._normalize_comparison_value(ability)
+
+        for valid_ability in preview_data["abilityOptions"]:
+            if self._normalize_comparison_value(valid_ability) == normalized_ability:
+                return {
+                    "species": preview_data["species"],
+                    "ability": valid_ability,
+                    "abilityOptions": preview_data["abilityOptions"],
+                }
+
+        raise ValueError(f"{ability} is not a valid ability for {preview_data['species'].species_name}")
+
+    def _get_or_create_species(self, normalized_name: str, pokemon_payload: dict):
         existing_species = self.pokemon_species_repo.get_pokemon_species_by_name(normalized_name)
         if existing_species is not None:
             return existing_species
 
-        pokemon_payload = self._fetch_json(f"{self.BASE_URL}/pokemon/{parse.quote(normalized_name)}")
         species_payload = self._fetch_json(pokemon_payload["species"]["url"])
 
-        type_ids = self._ensure_types(pokemon_payload["types"])
-        generation_id = self._ensure_generation(species_payload["generation"]["name"])
+        type_ids = self._get_or_create_types(pokemon_payload["types"])
+        generation_id = self._get_or_create_generation(species_payload["generation"]["name"])
         rarity = self._determine_rarity(pokemon_payload["stats"])
 
         species = Pokemon_Species(
@@ -71,6 +99,7 @@ class PokeApiHandler:
             spdef=self._stat_value(pokemon_payload["stats"], "special-defense"),
             speed=self._stat_value(pokemon_payload["stats"], "speed"),
         )
+
         self.pokemon_species_repo.create_pokemon_species(species)
         return self.pokemon_species_repo.get_pokemon_species_by_name(normalized_name)
 
@@ -78,30 +107,60 @@ class PokeApiHandler:
         normalized_modifier = (modifier or "").strip().lower()
         increased_stat, decreased_stat = self.NATURE_MODIFIERS.get(normalized_modifier, (None, None))
 
-        stat_map = {
-            "hp": pokemon_species.hp,
-            "atk": pokemon_species.atk,
-            "def": pokemon_species.deff,
-            "spatk": pokemon_species.spatk,
-            "spdef": pokemon_species.spdef,
-            "speed": pokemon_species.speed,
-        }
-
         calculated_stats = {
-            "hp": self._calculate_hp(stat_map["hp"], level),
-            "atk": self._calculate_other_stat(stat_map["atk"], level),
-            "def": self._calculate_other_stat(stat_map["def"], level),
-            "spAtk": self._calculate_other_stat(stat_map["spatk"], level),
-            "spDef": self._calculate_other_stat(stat_map["spdef"], level),
-            "speed": self._calculate_other_stat(stat_map["speed"], level),
+            "hp": self._calculate_hp(pokemon_species.hp, level),
+            "atk": self._calculate_other_stat(pokemon_species.atk, level),
+            "def": self._calculate_other_stat(pokemon_species.deff, level),
+            "spAtk": self._calculate_other_stat(pokemon_species.spatk, level),
+            "spDef": self._calculate_other_stat(pokemon_species.spdef, level),
+            "speed": self._calculate_other_stat(pokemon_species.speed, level),
         }
 
         if increased_stat:
-            calculated_stats[self._response_key(increased_stat)] = int(calculated_stats[self._response_key(increased_stat)] * 1.1)
+            increased_key = self._response_key(increased_stat)
+            calculated_stats[increased_key] = int(calculated_stats[increased_key] * 1.1)
+
         if decreased_stat:
-            calculated_stats[self._response_key(decreased_stat)] = int(calculated_stats[self._response_key(decreased_stat)] * 0.9)
+            decreased_key = self._response_key(decreased_stat)
+            calculated_stats[decreased_key] = int(calculated_stats[decreased_key] * 0.9)
 
         return calculated_stats
+
+    def _get_or_create_types(self, type_entries):
+        ordered_entries = sorted(type_entries, key=lambda entry: entry["slot"])
+        type_ids = []
+
+        for entry in ordered_entries:
+            type_name = self._display_name(entry["type"]["name"])
+            the_type = self.type_repo.get_type_by_name(type_name)
+
+            if the_type is None:
+                self.type_repo.create_type(Type(type_Id=None, name=type_name))
+                the_type = self.type_repo.get_type_by_name(type_name)
+
+            type_ids.append(the_type.type_Id)
+
+        return type_ids
+
+    def _get_or_create_generation(self, generation_api_name: str):
+        generation_name, region_name = self.GENERATION_REGION_MAP.get(
+            generation_api_name,
+            (self._display_name(generation_api_name), "Unknown"),
+        )
+
+        region = self.region_repo.get_region_by_name(region_name)
+        if region is None:
+            self.region_repo.create_region(Region(region_Id=None, region_name=region_name))
+            region = self.region_repo.get_region_by_name(region_name)
+
+        generation = self.generation_repo.get_generation_by_name(generation_name)
+        if generation is None:
+            self.generation_repo.create_generation(
+                Generation(gen_Id=None, region_Id=region.region_Id, gen_Name=generation_name)
+            )
+            generation = self.generation_repo.get_generation_by_name(generation_name)
+
+        return generation.gen_Id
 
     def _fetch_json(self, url: str):
         try:
@@ -111,90 +170,6 @@ class PokeApiHandler:
             raise ValueError(f"PokeAPI request failed for {url}: {exc.code}") from exc
         except error.URLError as exc:
             raise ValueError(f"Unable to reach PokeAPI for {url}") from exc
-
-    def _ensure_types(self, type_entries):
-        ordered_entries = sorted(type_entries, key=lambda entry: entry["slot"])
-        type_ids = []
-
-        for entry in ordered_entries:
-            type_name = self._display_name(entry["type"]["name"])
-            type_ids.append(self._ensure_type(type_name))
-
-        return type_ids
-
-    def _ensure_type(self, type_name: str):
-        row = self._fetch_one(
-            f"SELECT TypeId FROM {self.executor.schema}.[Type] WHERE LOWER(Name) = LOWER(%s)",
-            {"Name": type_name},
-        )
-        if row:
-            return row["TypeId"]
-
-        self._execute_non_query(
-            f"INSERT INTO {self.executor.schema}.[Type] (Name) VALUES (%s)",
-            {"Name": type_name},
-        )
-        row = self._fetch_one(
-            f"SELECT TypeId FROM {self.executor.schema}.[Type] WHERE LOWER(Name) = LOWER(%s)",
-            {"Name": type_name},
-        )
-        return row["TypeId"]
-
-    def _ensure_generation(self, generation_api_name: str):
-        generation_name, region_name = self.GENERATION_REGION_MAP.get(
-            generation_api_name,
-            (self._display_name(generation_api_name), "Unknown"),
-        )
-        region_id = self._ensure_region(region_name)
-
-        row = self._fetch_one(
-            f"SELECT GenId FROM {self.executor.schema}.Generation WHERE LOWER(GenName) = LOWER(%s)",
-            {"GenName": generation_name},
-        )
-        if row:
-            return row["GenId"]
-
-        self._execute_non_query(
-            f"INSERT INTO {self.executor.schema}.Generation (RegionId, GenName) VALUES (%s, %s)",
-            {"RegionId": region_id, "GenName": generation_name},
-        )
-        row = self._fetch_one(
-            f"SELECT GenId FROM {self.executor.schema}.Generation WHERE LOWER(GenName) = LOWER(%s)",
-            {"GenName": generation_name},
-        )
-        return row["GenId"]
-
-    def _ensure_region(self, region_name: str):
-        row = self._fetch_one(
-            f"SELECT RegionId FROM {self.executor.schema}.Region WHERE LOWER(RegionName) = LOWER(%s)",
-            {"RegionName": region_name},
-        )
-        if row:
-            return row["RegionId"]
-
-        self._execute_non_query(
-            f"INSERT INTO {self.executor.schema}.Region (RegionName) VALUES (%s)",
-            {"RegionName": region_name},
-        )
-        row = self._fetch_one(
-            f"SELECT RegionId FROM {self.executor.schema}.Region WHERE LOWER(RegionName) = LOWER(%s)",
-            {"RegionName": region_name},
-        )
-        return row["RegionId"]
-
-    def _fetch_one(self, sql: str, params: dict):
-        with self.executor.transaction_scope() as connection:
-            temp = self.executor.execute_query(sql, connection, params)
-            rows_returned = self.executor.get_all_rows(temp)
-
-        if not rows_returned:
-            return None
-
-        return rows_returned[0]
-
-    def _execute_non_query(self, sql: str, params: dict):
-        with self.executor.transaction_scope() as connection:
-            self.executor.execute_query(sql, connection, params)
 
     @staticmethod
     def _stat_value(stats_payload, stat_name: str):
@@ -224,6 +199,21 @@ class PokeApiHandler:
     @staticmethod
     def _display_name(name: str):
         return name.replace("-", " ").title()
+
+    @classmethod
+    def _extract_abilities(cls, pokemon_payload):
+        ability_options = []
+
+        for ability_entry in pokemon_payload["abilities"]:
+            ability_name = cls._display_name(ability_entry["ability"]["name"])
+            if ability_name not in ability_options:
+                ability_options.append(ability_name)
+
+        return ability_options
+
+    @staticmethod
+    def _normalize_comparison_value(value: str):
+        return value.strip().lower().replace("-", " ")
 
     @staticmethod
     def _calculate_hp(base_stat: int, level: int):

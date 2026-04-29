@@ -53,11 +53,11 @@ def create_user():
         return {"message": "wins and losses are required"}, 400
 
     user = User(userId=None, user_name=user_name, wins=wins, losses=losses)
-    users_repo.create_user(user)
+    created_user = users_repo.create_user(user)
 
     return {
         "message": "User created successfully",
-        "user": serialize_user(user),
+        "user": serialize_user(created_user),
     }, 201
 
 

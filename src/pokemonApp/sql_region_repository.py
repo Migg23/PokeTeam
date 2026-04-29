@@ -5,6 +5,17 @@ class SqlRegionRepository(IRegionRepository):
     def __init__(self , executor):
         self.executor = executor
 
+    def create_region(self, region):
+        sql = f"""
+            INSERT INTO {self.executor.schema}.Region (RegionName)
+            VALUES (%s)
+        """
+
+        params = {"RegionName": region.region_Name}
+
+        with self.executor.transaction_scope() as connection:
+            self.executor.execute_query(sql, connection, params)
+
     def get_all_regions(self):
         sql = f"""
             SELECT *
@@ -48,5 +59,24 @@ class SqlRegionRepository(IRegionRepository):
         row = rows_returned[0]
 
         return(Region(region_Id=row["RegionId"] , region_name=row["RegionName"]))
+
+    def get_region_by_name(self, region_name):
+        sql = f"""
+            SELECT *
+            FROM {self.executor.schema}.Region R
+            WHERE LOWER(R.RegionName) = LOWER(%s)
+        """
+
+        params = {"RegionName": region_name}
+
+        with self.executor.transaction_scope() as connection:
+            temp = self.executor.execute_query(sql, connection, params)
+            rows_returned = self.executor.get_all_rows(temp)
+
+        if not rows_returned:
+            return None
+
+        row = rows_returned[0]
+        return Region(region_Id=row["RegionId"], region_name=row["RegionName"])
 
             

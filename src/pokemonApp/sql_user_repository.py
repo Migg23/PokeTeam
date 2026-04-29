@@ -20,9 +20,10 @@ class SqlUserRepository(IUserRepository):
             INSERT INTO {self.executor.schema}.[User]
                 (UserName, Wins, Losses)
             VALUES
-                (%s, %s, %s) 
+                (%s, %s, %s);
+            SELECT CAST(SCOPE_IDENTITY() AS INT) AS UserId 
         """ # the %s represents where the variables we want to insert aka what the query needs to run the way we want
-        
+            #need scope identity because it ensures we get the last id to return the user for the frontend
         #here are hte params that are inserted into %s so that the quert can run
         params = {
             "UserName": user.user_name,
@@ -32,7 +33,13 @@ class SqlUserRepository(IUserRepository):
 
         #this represents the connection the executor esablishes and we execute the query in SqlCommandExecutor
         with self.executor.transaction_scope() as connection:
-            self.executor.execute_query(sql, connection, params)
+            temp = self.executor.execute_query(sql, connection, params)
+            rows_recieved = self.executor.get_all_rows(temp)
+
+        if not rows_recieved:
+            return None
+
+        return self.get_user_by_Id(rows_recieved[0]["UserId"])
 
     def get_user_by_Id(self, user_Id):
         sql = f"""

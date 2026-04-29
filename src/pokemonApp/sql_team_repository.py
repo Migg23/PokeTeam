@@ -10,14 +10,21 @@ class SqlTeamRepository(ITeamRepository):
     def create_team(self, team):
         sql = f"""
             INSERT INTO {self.executor.schema}.Team(UserId,TeamName)
-            VALUES(%s,%s)
+            VALUES(%s,%s);
+            SELECT CAST(SCOPE_IDENTITY() AS INT) AS TeamId
         """
 
         params = {"UserId" : team.user_Id, "TeamName" : team.team_name}
 
 
         with self.executor.transaction_scope() as connection:
-            self.executor.execute_query(sql, connection, params)
+            temp = self.executor.execute_query(sql, connection, params)
+            rows_returned = self.executor.get_all_rows(temp)
+
+        if not rows_returned:
+            return None
+
+        return self.get_team_with_teamId(rows_returned[0]["TeamId"])
         
     
     #change this because team id = 1 not multiple teams
@@ -78,5 +85,4 @@ class SqlTeamRepository(ITeamRepository):
 
         with self.executor.transaction_scope() as connection:
             self.executor.execute_query(sql,connection,params)
-
 
