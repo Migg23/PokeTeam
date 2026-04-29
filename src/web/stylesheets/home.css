@@ -1,0 +1,39 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f8ff;
+    color: #333;
+    text-align: center;
+    padding: 50px;
+    margin: 0;
+}
+
+.header {
+    background-color: #ff0000;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.username {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.wins {
+    font-size: 18px;
+    background-color: #ffff00;
+    color: #333;
+    padding: 10px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.team-section {
+    margin-top: 40px;
+}
+
+.team-section h2 {
+    color: #007bff;
+}

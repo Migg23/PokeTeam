@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeTeam - Login</title>
+    <link rel="stylesheet" href="../stylesheets/style.css">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="min-h-screen bg-red-600 flex items-center justify-center p-4" style="background-image: radial-gradient(circle at top left, #ef4444 0%, #dc2626 50%, #991b1b 100%)">
+
+    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-md w-full border-4 border-gray-900">
+        <div class="bg-red-500 p-6 border-b-4 border-gray-900 flex flex-col items-center relative">
+            <div class="absolute top-4 left-4 flex gap-2">
+                <div class="w-12 h-12 bg-blue-400 rounded-full border-4 border-gray-100 shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.5)]"></div>
+                <div class="flex gap-1">
+                    <div class="w-4 h-4 bg-red-400 rounded-full border-2 border-gray-900"></div>
+                    <div class="w-4 h-4 bg-yellow-400 rounded-full border-2 border-gray-900"></div>
+                    <div class="w-4 h-4 bg-green-400 rounded-full border-2 border-gray-900"></div>
+                </div>
+            </div>
+            <div class="mt-14 flex items-center justify-center bg-gray-900 w-32 h-32 rounded-full border-4 border-white shadow-xl">
+                 <i data-lucide="key-round" class="w-16 h-16 text-white"></i>
+            </div>
+            <h1 class="text-3xl font-black text-white mt-4 tracking-wider uppercase drop-shadow-sm">PokeTeam</h1>
+            <p class="text-red-100 font-medium">Log in to build your dream team!</p>
+        </div>
+        
+        <form action="home.html" class="p-8 bg-gray-50 space-y-6">
+            <div class="space-y-2">
+                <label class="text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="mail" class="w-4 h-4"></i> Trainer Email
+                </label>
+                <input type="email" class="w-full bg-white border-2 border-gray-300 rounded-lg p-3 text-gray-800 font-medium focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all" placeholder="ash@pallettown.com" required />
+            </div>
+            
+            <div class="space-y-2">
+                <label class="text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="lock" class="w-4 h-4"></i> Secret Code
+                </label>
+                <input type="password" class="w-full bg-white border-2 border-gray-300 rounded-lg p-3 text-gray-800 font-medium focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all" placeholder="••••••••" required />
+            </div>
+            
+            <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold text-lg py-4 rounded-xl shadow-lg border-b-4 border-green-700 active:translate-y-1 active:border-b-0 active:mb-1 transition-all uppercase tracking-widest">
+                Enter PC
+            </button>
+        </form>
+    </div>
+
+    <script>lucide.createIcons();</script>
+</body>
+</html>

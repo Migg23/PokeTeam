@@ -4,37 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Teams - PokeTeam</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-        }
-        .team-button {
-            display: inline-block;
-            margin: 10px;
-            padding: 15px 30px;
-            background-color: #4CAF50;
-            color: white;
-            text-decoration: none;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .team-button:hover {
-            background-color: #45a049;
-        }
-    </style>
+    <link rel="stylesheet" href="../stylesheets/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-    <h1>My Pokemon Teams</h1>
-    <div>
-        <button class="team-button" onclick="window.location.href='team1.html'">Team 1</button>
-        <button class="team-button" onclick="window.location.href='team2.html'">Team 2</button>
-        <button class="team-button" onclick="window.location.href='team3.html'">Team 3</button>
-        <button class="team-button" onclick="window.location.href='team4.html'">Team 4</button>
-        <button class="team-button" onclick="window.location.href='team5.html'">Team 5</button>
-        <button class="team-button" onclick="window.location.href='team6.html'">Team 6</button>
+<body class="min-h-screen bg-gray-100 p-8">
+
+    <div class="max-w-6xl mx-auto">
+        
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-4">
+                <a href="home.html" class="p-3 bg-white rounded-full shadow-md border-2 border-gray-200 hover:bg-gray-50 transition-colors block">
+                    <i data-lucide="arrow-left" class="w-6 h-6 text-gray-600"></i>
+                </a>
+                <h1 class="text-4xl font-black text-gray-900 uppercase tracking-wider flex items-center gap-3">
+                    <i data-lucide="users" class="w-10 h-10 text-red-500"></i> My Pokémon Teams
+                </h1>
+            </div>
+            
+            <button onclick="addNewTeam()" class="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg border-b-4 border-green-700 active:translate-y-1 active:border-b-0 transition-all uppercase">
+                <i data-lucide="plus" class="w-5 h-5"></i> Add New Team
+            </button>
+        </div>
+
+        <div id="teams-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
     </div>
+
+    <script src="../scripts/scripts.js"></script>
 </body>
 </html>
