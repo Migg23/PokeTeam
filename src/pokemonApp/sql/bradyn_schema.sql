@@ -41,7 +41,7 @@ CREATE TABLE pokemon.PokemonSpecies (
     GenerationId INT NOT NULL,
     TypeOneId INT NOT NULL,
     TypeTwoId INT NULL,
-    SpeciesName NVVARCHAR(50) NOT NULL,
+    SpeciesName NVARCHAR(50) NOT NULL,
     Rarity INT NOT NULL,
     Hp INT NOT NULL,
     Atk INT NOT NULL,

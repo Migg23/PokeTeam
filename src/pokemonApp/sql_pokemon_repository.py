@@ -11,13 +11,20 @@ class SqlPokemonRepository(IPokemonRepository):
     def create_pokemon(self , pokemon):
         sql = f"""
             INSERT INTO {self.executor.schema}.Pokemon(SpeciesId,Level,Ability, Nature)
-            VALUES( %s,%s, %s, %s)
+            VALUES( %s,%s, %s, %s);
+            SELECT CAST(SCOPE_IDENTITY() AS INT) AS PokedexId;
         """
 
         params = {"SpeciesId" : pokemon.species_Id, "Level" : pokemon.level, "Ability" : pokemon.ability, "Nature" : pokemon.nature}
 
         with self.executor.transaction_scope() as connection:
-            self.executor.execute_query(sql,connection,params)
+            temp = self.executor.execute_query(sql,connection,params)
+            rows_returned = self.executor.get_all_rows(temp)
+
+        if not rows_returned:
+            return None
+
+        return rows_returned[0]["PokedexId"]
     
 
     def get_pokemon_by_Id(self, pokedex_Id):
@@ -57,13 +64,20 @@ class SqlPokemonRepository(IPokemonRepository):
         sql = f"""
             UPDATE {self.executor.schema}.Pokemon
             SET
+                SpeciesId = %s,
                 Level = %s,
                 Nature = %s,
                 Ability = %s
             WHERE PokedexId = %s
         """
 
-        params = {"Level": pokemon.level,"Nature": pokemon.nature,"Ability": pokemon.ability,"PokedexId": pokemon.pokedex_Id,}
+        params = {
+            "SpeciesId": pokemon.species_Id,
+            "Level": pokemon.level,
+            "Nature": pokemon.nature,
+            "Ability": pokemon.ability,
+            "PokedexId": pokemon.pokedex_Id,
+        }
 
         with self.executor.transaction_scope() as connection:
             self.executor.execute_query(sql,connection,params)

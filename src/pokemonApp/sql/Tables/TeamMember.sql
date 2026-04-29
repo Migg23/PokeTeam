@@ -4,7 +4,7 @@ GO
 CREATE TABLE pokemon.TeamMember (
     MemberId INT IDENTITY(1,1) PRIMARY KEY,
     TeamId INT NOT NULL,
-    PokemonId INT NOT NULL,
+    PokedexId INT NOT NULL,
     TeamNumber INT NOT NULL CHECK (TeamNumber BETWEEN 1 AND 6),
 
     CONSTRAINT FK_TeamMember_Team

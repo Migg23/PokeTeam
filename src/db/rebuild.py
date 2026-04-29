@@ -44,6 +44,13 @@ def split_sql_batches(sql_text: str) -> list[str]:
     return batches
 
 
+def render_sql(sql_text: str, schema_name: str | None) -> str:
+    if schema_name:
+        return sql_text.replace("{{SCHEMA}}", schema_name)
+
+    return sql_text
+
+
 def execute_files(executor: SqlCommandExecutor, files: Iterable[Path]):
     with executor.transaction_scope() as connection:
         for file_path in files:
@@ -51,6 +58,7 @@ def execute_files(executor: SqlCommandExecutor, files: Iterable[Path]):
             if not sql_text:
                 continue
 
+            sql_text = render_sql(sql_text, executor.schema)
             batches = split_sql_batches(sql_text)
 
             for batch in batches:

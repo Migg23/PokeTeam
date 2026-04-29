@@ -1,17 +1,14 @@
-USE PokemonDB;
-GO
-
 ---------------------------------------------------------
 -- REGION
 ---------------------------------------------------------
-INSERT INTO pokemon.Region (RegionName)
+INSERT INTO {{SCHEMA}}.Region (RegionName)
 VALUES ('Kanto'), ('Johto'), ('Hoenn');
 
 ---------------------------------------------------------
 -- GENERATION
 ---------------------------------------------------------
-INSERT INTO pokemon.Generation (RegionId, GenerationName)
-VALUES 
+INSERT INTO {{SCHEMA}}.Generation (RegionId, GenName)
+VALUES
 (1, 'Generation I'),
 (2, 'Generation II'),
 (3, 'Generation III');
@@ -19,14 +16,14 @@ VALUES
 ---------------------------------------------------------
 -- TYPE
 ---------------------------------------------------------
-INSERT INTO pokemon.Type (Name)
-VALUES 
+INSERT INTO {{SCHEMA}}.[Type] (Name)
+VALUES
 ('Fire'), ('Water'), ('Grass'), ('Electric'), ('Normal');
 
 ---------------------------------------------------------
 -- POKEMON SPECIES
 ---------------------------------------------------------
-INSERT INTO pokemon.PokemonSpecies 
+INSERT INTO {{SCHEMA}}.PokemonSpecies
 (GenerationId, TypeOneId, TypeTwoId, SpeciesName, Rarity, Hp, Atk, SpAtk, Def, SpDef, Speed)
 VALUES
 (1, 1, NULL, 'Charmander', 3, 39, 52, 60, 43, 50, 65),
@@ -36,7 +33,7 @@ VALUES
 ---------------------------------------------------------
 -- POKEMON
 ---------------------------------------------------------
-INSERT INTO pokemon.Pokemon (SpeciesId, Level, Ability, Nature)
+INSERT INTO {{SCHEMA}}.Pokemon (SpeciesId, Level, Ability, Nature)
 VALUES
 (1, 5, 'Blaze', 'Brave'),
 (2, 5, 'Torrent', 'Calm'),
@@ -45,7 +42,7 @@ VALUES
 ---------------------------------------------------------
 -- USER
 ---------------------------------------------------------
-INSERT INTO pokemon.[User] (UserName, Wins, Losses)
+INSERT INTO {{SCHEMA}}.[User] (UserName, Wins, Losses)
 VALUES
 ('Miguel', 10, 2),
 ('Bradyn', 20, 5);
@@ -53,7 +50,7 @@ VALUES
 ---------------------------------------------------------
 -- TEAM
 ---------------------------------------------------------
-INSERT INTO pokemon.Team (UserId, TeamName)
+INSERT INTO {{SCHEMA}}.Team (UserId, TeamName)
 VALUES
 (1, 'Miguel Team Alpha'),
 (2, 'Bradyn Team Omega');
@@ -61,7 +58,7 @@ VALUES
 ---------------------------------------------------------
 -- TEAM MEMBER
 ---------------------------------------------------------
-INSERT INTO pokemon.TeamMember (TeamId, PokemonId, TeamNumber)
+INSERT INTO {{SCHEMA}}.TeamMember (TeamId, PokedexId, TeamNumber)
 VALUES
 (1, 1, 1),
 (1, 2, 2),

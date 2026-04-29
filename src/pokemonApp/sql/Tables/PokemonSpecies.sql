@@ -3,7 +3,7 @@ GO
 
 CREATE TABLE pokemon.PokemonSpecies (
     SpeciesId INT IDENTITY(1,1) PRIMARY KEY,
-    GenerationId INT NOT NULL,
+    GenId INT NOT NULL,
     TypeOneId INT NOT NULL,
     TypeTwoId INT NULL,
     SpeciesName NVARCHAR(50) NOT NULL,

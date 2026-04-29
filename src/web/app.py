@@ -2,7 +2,6 @@ from flask import Flask
 
 from src.web.routes.generation_route import generation_routes
 from src.web.routes.pokemon_route import pokemon_routes
-from src.web.routes.pokemon_species_route import pokemon_species_routes
 from src.web.routes.region_route import region_routes
 from src.web.routes.user_route import user_routes
 from src.web.routes.team_member_route import team_member_routes
@@ -14,7 +13,6 @@ app.register_blueprint(user_routes)
 app.register_blueprint(team_routes)
 app.register_blueprint(team_member_routes)
 app.register_blueprint(pokemon_routes)
-app.register_blueprint(pokemon_species_routes)
 app.register_blueprint(generation_routes)
 app.register_blueprint(region_routes)
 app.register_blueprint(type_routes)
