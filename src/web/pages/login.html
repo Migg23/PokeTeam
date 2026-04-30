@@ -42,19 +42,6 @@
         </form>
     </div>
 
-    <script>
-        lucide.createIcons();
-
-        // Save username to localStorage before redirecting
-        function handleLogin(event) {
-            event.preventDefault(); // Prevent standard form submission
-            
-            const username = document.getElementById('username-input').value;
-            localStorage.setItem('trainerName', username);
-            
-            // Redirect to home page
-            window.location.href = 'home.html';
-        }
-    </script>
+    <script src="../scripts/scripts.js"></script>
 </body>
 </html>

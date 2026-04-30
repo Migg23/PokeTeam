@@ -64,3 +64,22 @@ def delete_team(team_id):
 
     teams_repo.delete_team(team)
     return {"message": "Team deleted successfully"}
+
+
+@team_routes.route("/teams/<int:team_id>/update", methods=["POST"])
+def update_team(team_id):
+    team = teams_repo.get_team_with_teamId(team_id)
+
+    if team is None:
+        return {"message": "Team not found"}, 404
+
+    team_name = request.form.get("teamName")
+
+    if not team_name:
+        return {"message": "teamName is required"}, 400
+
+    updated_team = teams_repo.update_team(team_id, team_name)
+    return {
+        "message": "Team updated successfully",
+        "team": serialize_team(updated_team),
+    }

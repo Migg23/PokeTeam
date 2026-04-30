@@ -86,3 +86,16 @@ class SqlTeamRepository(ITeamRepository):
         with self.executor.transaction_scope() as connection:
             self.executor.execute_query(sql,connection,params)
 
+    def update_team(self, team_Id, team_name):
+        sql = f"""
+            UPDATE {self.executor.schema}.Team
+            SET TeamName = %s
+            WHERE TeamId = %s
+        """
+
+        params = {"TeamName": team_name, "TeamId": team_Id}
+
+        with self.executor.transaction_scope() as connection:
+            self.executor.execute_query(sql, connection, params)
+
+        return self.get_team_with_teamId(team_Id)

@@ -1,6 +1,6 @@
 
 USE cis560_s26_team8
-INSERT INTO [Region] (RegionName)
+INSERT INTO {{SCHEMA}}.[Region] (RegionName)
 VALUES 
 ('Kanto'),
 ('Johto'),
@@ -11,7 +11,7 @@ VALUES
 ('Alola'),
 ('Galar');
 
-INSERT INTO [Generation] (RegionId, GenerationName)
+INSERT INTO {{SCHEMA}}.[Generation] (RegionId, GenName)
 VALUES
 (1, 'Generation I'),
 (2, 'Generation II'),
@@ -22,15 +22,15 @@ VALUES
 (7, 'Generation VII'),
 (8, 'Generation VIII');
 
-INSERT INTO [Type] ([Name])
+INSERT INTO {{SCHEMA}}.[Type] ([Name])
 VALUES
 ('Normal'), ('Fire'), ('Water'), ('Grass'), ('Electric'),
 ('Ice'), ('Fighting'), ('Poison'), ('Ground'), ('Flying'),
 ('Psychic'), ('Bug'), ('Rock'), ('Ghost'), ('Dragon'),
 ('Dark'), ('Steel'), ('Fairy');
 
-INSERT INTO [PokemonSpecies]
-(GenerationId, TypeOneId, TypeTwoId, SpeciesName, Rarity, Hp, Atk, SpAtk, Def, SpDef, Speed)
+INSERT INTO {{SCHEMA}}.[PokemonSpecies]
+(GenId, TypeOneId, TypeTwoId, SpeciesName, Rarity, Hp, Atk, SpAtk, Def, SpDef, Speed)
 VALUES
 -- Gen 1
 (1, 2, NULL, 'Charmander', 3, 39, 52, 60, 43, 50, 65),
@@ -52,7 +52,7 @@ VALUES
 (1, 1, NULL, 'Eevee', 2, 55, 55, 45, 50, 65, 55),
 (4, 15, NULL, 'Gible', 1, 58, 70, 40, 45, 45, 42);
 
-INSERT INTO [Pokemon] (SpeciesId, Level, Ability, Nature)
+INSERT INTO {{SCHEMA}}.[Pokemon] (SpeciesId, Level, Ability, Nature)
 VALUES
 (1, 12, 'Blaze', 'Brave'),
 (2, 10, 'Torrent', 'Calm'),
@@ -75,7 +75,7 @@ VALUES
 (7, 21, 'Blaze', 'Sassy'),
 (8, 19, 'Torrent', 'Gentle');
 
-INSERT INTO [User] (UserName, Wins, Losses)
+INSERT INTO {{SCHEMA}}.[User] (UserName, Wins, Losses)
 VALUES
 ('Miguel', 10, 2),
 ('Bradyn', 20, 5),
@@ -84,7 +84,7 @@ VALUES
 ('Brock', 200, 60),
 ('Cynthia', 500, 10);
 
-INSERT INTO [Team] (UserId, TeamName)
+INSERT INTO {{SCHEMA}}.[Team] (UserId, TeamName)
 VALUES
 (1, 'Miguel Alpha'),
 (2, 'Bradyn Omega'),
@@ -93,7 +93,7 @@ VALUES
 (5, 'Brock Rock Smashers'),
 (6, 'Cynthia Elite Team');
 
-INSERT INTO [TeamMember] (TeamId, PokemonId, TeamNumber)
+INSERT INTO {{SCHEMA}}.[TeamMember] (TeamId, PokedexId, TeamNumber)
 VALUES
 -- Miguel
 (1, 1, 1), (1, 2, 2), (1, 3, 3), (1, 4, 4), (1, 5, 5), (1, 6, 6),

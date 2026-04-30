@@ -10,19 +10,19 @@ class SqlPokemonSpecies(IPokemonSpeciesRepository):
     def create_pokemon_species(self, pokemon_species):
         sql = f"""
             INSERT INTO {self.executor.schema}.PokemonSpecies
-                (GenerationId, TypeOneId, TypeTwoId, SpeciesName, Rarity, HP, Atk, SpAtk, Def, SpDef, Speed)
+                (GenerationId, TypeOneId, TypeTwoId, SpeciesName, Rarity, Hp, Atk, SpAtk, Def, SpDef, Speed)
             VALUES
                 (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
 
         params = {
-            "GenerationId": pokemon_species.generation_Id,
+            "GenId": pokemon_species.generation_Id,
             "TypeOneId": pokemon_species.type_one_Id,
             "TypeTwoId": pokemon_species.type_two_Id,
             "SpeciesName": pokemon_species.species_name,
             "Rarity": pokemon_species.rarity,
-            "HP": pokemon_species.hp,
+            "Hp": pokemon_species.hp,
             "Atk": pokemon_species.atk,
             "SpAtk": pokemon_species.spatk,
             "Def": pokemon_species.deff,
@@ -54,8 +54,8 @@ class SqlPokemonSpecies(IPokemonSpeciesRepository):
 
         row = rows_returned[0]
 
-        return( Pokemon_Species( species_Id= row["SpeciesId"],generation_Id= row["GenerationId"] , type_one_Id=row["TypeOneId"], type_two_Id=row["TypeTwoId"], species_name= row["SpeciesName"],
-                                rarity=row["Rarity"], hp = row["HP"] , atk= row["Atk"] , spatk = row["SpAtk"] , deff = row["Def"], spdef= row["SpDef"] , speed= row["Speed"]))
+        return( Pokemon_Species( species_Id= row["SpeciesId"],generation_Id= row["GenId"] , type_one_Id=row["TypeOneId"], type_two_Id=row["TypeTwoId"], species_name= row["SpeciesName"],
+                                rarity=row["Rarity"], hp = row["Hp"] , atk= row["Atk"] , spatk = row["SpAtk"] , deff = row["Def"], spdef= row["SpDef"] , speed= row["Speed"]))
     
 
     def get_pokemon_species_by_name(self, name):
@@ -76,8 +76,8 @@ class SqlPokemonSpecies(IPokemonSpeciesRepository):
         
         row = rows_returned[0]
 
-        return( Pokemon_Species( species_Id= row["SpeciesId"],generation_Id= row["GenerationId"] , type_one_Id=row["TypeOneId"], type_two_Id=row["TypeTwoId"], species_name= row["SpeciesName"],
-                                rarity=row["Rarity"], hp = row["HP"] , atk= row["Atk"] , spatk = row["SpAtk"] , deff = row["Def"], spdef= row["SpDef"] , speed= row["Speed"]))
+        return( Pokemon_Species( species_Id= row["SpeciesId"],generation_Id= row["GenId"] , type_one_Id=row["TypeOneId"], type_two_Id=row["TypeTwoId"], species_name= row["SpeciesName"],
+                                rarity=row["Rarity"], hp = row["Hp"] , atk= row["Atk"] , spatk = row["SpAtk"] , deff = row["Def"], spdef= row["SpDef"] , speed= row["Speed"]))
     
 
         

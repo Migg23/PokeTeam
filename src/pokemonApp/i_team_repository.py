@@ -18,4 +18,8 @@ class ITeamRepository(ABC):
     def create_team(self,team):
         pass
 
+    @abstractmethod
+    def update_team(self, team_Id, team_name):
+        pass
+
     
