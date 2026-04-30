@@ -21,7 +21,7 @@
             
             <div class="flex-1 overflow-y-auto p-6 flex flex-col items-center bg-gray-50">
                 <div class="w-24 h-24 bg-white rounded-full border-4 border-gray-800 shadow-md flex items-center justify-center mb-4 overflow-hidden">
-                    <i data-lucide="user" class="w-12 h-12 text-gray-400"></i>
+                    <img id="profile-avatar" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" class="w-full h-full object-contain p-2" alt="Trainer Avatar">
                 </div>
 
                 <h2 id="profile-username" class="text-xl font-black text-gray-800 tracking-wide text-center truncate w-full">
@@ -35,7 +35,7 @@
                     <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest border-b-2 border-gray-200 pb-1 mb-4">Battle Record</h3>
                 </div>
 
-                <div class="w-full grid grid-cols-2 gap-3">
+                <div class="w-full grid grid-cols-2 gap-3 mb-8">
                     <div class="bg-green-50 border-2 border-green-200 rounded-xl p-3 flex flex-col items-center justify-center shadow-sm">
                         <span class="text-[10px] font-bold text-green-600 uppercase tracking-wider">Wins</span>
                         <span id="profile-wins" class="text-2xl font-black text-green-700">0</span>
@@ -46,6 +46,10 @@
                         <span id="profile-losses" class="text-2xl font-black text-red-700">0</span>
                     </div>
                 </div>
+
+                <button onclick="openProfileModal()" class="w-full mt-auto bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-md transition-all uppercase tracking-wider text-sm border-b-4 border-black active:translate-y-1 active:border-b-0">
+                    <i data-lucide="settings" class="w-5 h-5"></i> Edit Profile
+                </button>
             </div>
         </div>
 
@@ -69,8 +73,6 @@
             .then(response => response.text())
             .then(data => {
                 document.getElementById('nav-placeholder').innerHTML = data;
-                
-                // Initialize Lucide icons for the newly injected navbar content
                 if (window.lucide) {
                     lucide.createIcons();
                 }
@@ -78,7 +80,6 @@
     </script>
     <script src="../scripts/scripts.js"></script>
     <script>
-        // Initialize Lucide icons for the static content already on the page
         lucide.createIcons();
     </script>
 </body>
