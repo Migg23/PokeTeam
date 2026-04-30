@@ -37,3 +37,48 @@ input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none; 
   margin: 0; 
 }
+
+/* Container for the injected nav */
+#nav-placeholder {
+    width: 100%;
+    z-index: 100; /* Keeps it above everything else */
+    position: relative;
+}
+
+/* The Nav Bar itself */
+.main-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #111827; /* Dark tailwind gray */
+    padding: 12px 24px;
+    font-family: 'Inter', sans-serif;
+    width: 100%;
+    box-sizing: border-box; /* Prevents padding from breaking the 100% width */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.nav-links, .nav-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.nav-btn {
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.nav-btn:hover { background-color: #374151; }
+
+.home-btn { background-color: #3b82f6; }
+.home-btn:hover { background-color: #2563eb; }
+
+.logout-btn { background-color: #ef4444; }
+.logout-btn:hover { background-color: #dc2626; }
