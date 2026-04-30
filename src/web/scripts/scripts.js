@@ -194,15 +194,46 @@ function getCurrentUser() {
     return defaultUser;
 }
 
-function renderTrainerSidebar() {
-    const user = getCurrentUser();
+function calculateWinRatio(wins, losses) {
+    const totalBattles = wins + losses;
+    if (totalBattles === 0) {
+        return "0%";
+    }
+
+    return `${Math.round((wins / totalBattles) * 100)}%`;
+}
+
+async function renderTrainerSidebar() {
+    let user = getCurrentUser();
+    const trainerUserId = getTrainerUserId();
+    const trainerName = getTrainerName();
+
+    if (trainerUserId) {
+        try {
+            const routeUser = await apiGet(`/users/${trainerUserId}`);
+            user = {
+                ...user,
+                id: routeUser.userId,
+                username: routeUser.userName,
+                wins: routeUser.wins,
+                losses: routeUser.losses,
+            };
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            setTrainer(routeUser);
+        } catch (error) {
+            console.error("Unable to load trainer sidebar from routes:", error);
+        }
+    }
     
     const nameEl = document.getElementById('profile-username');
     if(nameEl) {
-        nameEl.textContent = user.username;
-        document.getElementById('profile-userid').textContent = `ID: ${user.id}`;
+        nameEl.textContent = trainerName || user.username;
+        document.getElementById('profile-userid').textContent = trainerUserId
+            ? `ID: #${String(trainerUserId).padStart(5, "0")}`
+            : `ID: ${user.id}`;
         document.getElementById('profile-wins').textContent = user.wins;
         document.getElementById('profile-losses').textContent = user.losses;
+        document.getElementById('profile-win-ratio').textContent = calculateWinRatio(user.wins, user.losses);
         
         const avatarEl = document.getElementById('profile-avatar');
         if (avatarEl) avatarEl.src = user.avatar;
@@ -916,7 +947,7 @@ function handleLogout(event) {
 document.addEventListener("DOMContentLoaded", async () => {
     
     if (document.getElementById('profile-username-display') || document.getElementById('profile-username')) {
-        renderTrainerSidebar();
+        await renderTrainerSidebar();
     }
 
     if (document.getElementById('pokedex-list') && typeof renderPokedexSidebar === "function") {
@@ -924,7 +955,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     
     if (document.getElementById('teams-grid')) {
-        initMyTeams();
+        await initMyTeams();
     }
     
     if (document.getElementById('full-screen-search')) {
