@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Usage Report - PokeTeam</title>
+    <link rel="stylesheet" href="../stylesheets/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="flex flex-col h-screen bg-gray-50 overflow-hidden" id="aggregate-view">
+
+    <div id="nav-placeholder"></div>
+
+    <div class="flex-1 overflow-y-auto p-6 relative">
+        <div class="max-w-7xl mx-auto space-y-6">
+            
+            <div class="bg-white p-6 rounded-xl border-2 border-gray-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <h1 id="aggregate-title" class="text-3xl font-black text-gray-900 uppercase tracking-wide flex items-center gap-3">
+                        <i data-lucide="bar-chart-3" class="text-red-600 w-8 h-8"></i>
+                        Global Species Usage Report
+                    </h1>
+                    <p id="aggregate-desc" class="text-gray-600 font-medium mt-2">
+                        Counts how many times each Pokémon species appears across all users' teams, displaying the most commonly used Pokémon alongside their base stats.
+                    </p>
+                </div>
+                <div class="bg-red-50 text-red-700 font-bold px-4 py-2 rounded-lg border border-red-200 shadow-inner whitespace-nowrap">
+                    Aggregate View 4/4
+                </div>
+            </div>
+
+            <div class="bg-gray-900 rounded-xl shadow-md overflow-hidden border-2 border-gray-800">
+                <div class="bg-gray-800 px-4 py-2 border-b border-gray-700 flex justify-between items-center">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Executed Query</span>
+                    <i data-lucide="code" class="w-4 h-4 text-gray-400"></i>
+                </div>
+                <div class="p-4 overflow-x-auto">
+                    <pre><code id="sql-query-display" class="text-sm font-mono text-green-400 leading-relaxed">
+-- Loading mock query...
+                    </code></pre>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md border-2 border-gray-200 overflow-hidden flex flex-col">
+                <div class="p-4 bg-gray-100 border-b-2 border-gray-200 flex items-center gap-2">
+                    <i data-lucide="table-2" class="w-5 h-5 text-gray-600"></i>
+                    <h2 class="text-lg font-bold text-gray-800 uppercase tracking-wide">Query Results</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse whitespace-nowrap" id="resultsTable">
+                        <thead>
+                            <tr class="bg-gray-50 border-b-2 border-gray-200 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                <th class="p-3 text-center">Sprite</th>
+                                <th class="p-3">Dex ID</th>
+                                <th class="p-3">Species Name</th>
+                                <th class="p-3 text-blue-600 bg-blue-50">Usage Count</th>
+                                <th class="p-3">Avg Level</th>
+                                <th class="p-3">Types</th>
+                                <th class="p-3">Gen</th>
+                                <th class="p-3">Region</th>
+                                <th class="p-3 text-green-600">HP</th>
+                                <th class="p-3 text-orange-600">Atk</th>
+                                <th class="p-3 text-yellow-600">Def</th>
+                                <th class="p-3 text-orange-400">SpA</th>
+                                <th class="p-3 text-yellow-400">SpD</th>
+                                <th class="p-3 text-pink-600">Spe</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 text-sm" id="table-body">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 1. Fetch Navbar
+        fetch('nav.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('nav-placeholder').innerHTML = data;
+                if (window.lucide) lucide.createIcons();
+            });
+
+        // 2. Mock Data & Logic
+        const mockQuery = `SELECT 
+    p.PokedexId, 
+    p.SpeciesName, 
+    COUNT(tp.SpeciesId) AS UsageCount,
+    ROUND(AVG(tp.Level), 0) AS AvgLevel,
+    p.Generation,
+    p.Region,
+    p.Type1, 
+    p.Type2,
+    p.HP, p.Atk, p.Def, p.SpAtk, p.SpDef, p.Speed,
+    p.SpriteUrl
+FROM Pokemon p
+JOIN TeamPokemon tp ON p.PokedexId = tp.SpeciesId
+GROUP BY p.PokedexId, p.SpeciesName, p.Generation, p.Region, p.Type1, p.Type2, p.HP, p.Atk, p.Def, p.SpAtk, p.SpDef, p.Speed, p.SpriteUrl
+ORDER BY UsageCount DESC
+LIMIT 10;`;
+
+        const mockData = [
+            { id: 94, name: "Gengar", usage: 1452, level: 68, types: ["Ghost", "Poison"], gen: 1, region: "Kanto", hp: 60, atk: 65, def: 60, spatk: 130, spdef: 75, speed: 110, sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/94.png" },
+            { id: 445, name: "Garchomp", usage: 1320, level: 72, types: ["Dragon", "Ground"], gen: 4, region: "Sinnoh", hp: 108, atk: 130, def: 95, spatk: 80, spdef: 85, speed: 102, sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/445.png" },
+            { id: 143, name: "Snorlax", usage: 1105, level: 65, types: ["Normal"], gen: 1, region: "Kanto", hp: 160, atk: 110, def: 65, spatk: 65, spdef: 110, speed: 30, sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/143.png" },
+            { id: 212, name: "Scizor", usage: 980, level: 62, types: ["Bug", "Steel"], gen: 2, region: "Johto", hp: 70, atk: 130, def: 100, spatk: 55, spdef: 80, speed: 65, sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/212.png" },
+            { id: 376, name: "Metagross", usage: 890, level: 70, types: ["Steel", "Psychic"], gen: 3, region: "Hoenn", hp: 80, atk: 135, def: 130, spatk: 95, spdef: 90, speed: 70, sprite: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/376.png" }
+        ];
+
+        // Helper function to format type badges
+        function getTypeBadge(type) {
+            const colors = {
+                'Normal': 'bg-gray-400', 'Fire': 'bg-red-500', 'Water': 'bg-blue-500',
+                'Electric': 'bg-yellow-400', 'Grass': 'bg-green-500', 'Ice': 'bg-cyan-300',
+                'Fighting': 'bg-red-700', 'Poison': 'bg-purple-500', 'Ground': 'bg-yellow-600',
+                'Flying': 'bg-indigo-400', 'Psychic': 'bg-pink-500', 'Bug': 'bg-lime-500',
+                'Rock': 'bg-yellow-800', 'Ghost': 'bg-purple-700', 'Dragon': 'bg-indigo-700',
+                'Dark': 'bg-gray-800', 'Steel': 'bg-gray-500', 'Fairy': 'bg-pink-300'
+            };
+            const colorClass = colors[type] || 'bg-gray-500';
+            return `<span class="px-2 py-0.5 text-[10px] text-white font-bold uppercase tracking-wider rounded ${colorClass}">${type}</span>`;
+        }
+
+        // Function to populate the table
+        function loadAggregateData() {
+            document.getElementById('sql-query-display').textContent = mockQuery;
+
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+
+            mockData.forEach(pokemon => {
+                const row = document.createElement('tr');
+                row.className = "hover:bg-gray-50 transition-colors";
+                
+                const typesHtml = pokemon.types.map(t => getTypeBadge(t)).join(' ');
+
+                row.innerHTML = `
+                    <td class="p-2 text-center">
+                        <img src="${pokemon.sprite}" alt="${pokemon.name}" class="w-12 h-12 inline-block drop-shadow-md">
+                    </td>
+                    <td class="p-3 font-bold text-gray-500">#${String(pokemon.id).padStart(3, '0')}</td>
+                    <td class="p-3 font-black text-gray-900">${pokemon.name}</td>
+                    <td class="p-3 font-black text-blue-700 bg-blue-50/50 text-center">${pokemon.usage}</td>
+                    <td class="p-3 font-medium text-gray-700 text-center">Lv. ${pokemon.level}</td>
+                    <td class="p-3 flex gap-1 items-center h-16">${typesHtml}</td>
+                    <td class="p-3 font-medium text-gray-600 text-center">${pokemon.gen}</td>
+                    <td class="p-3 font-medium text-gray-600">${pokemon.region}</td>
+                    <td class="p-3 font-bold text-green-700">${pokemon.hp}</td>
+                    <td class="p-3 font-bold text-orange-700">${pokemon.atk}</td>
+                    <td class="p-3 font-bold text-yellow-700">${pokemon.def}</td>
+                    <td class="p-3 font-bold text-orange-500">${pokemon.spatk}</td>
+                    <td class="p-3 font-bold text-yellow-500">${pokemon.spdef}</td>
+                    <td class="p-3 font-bold text-pink-700">${pokemon.speed}</td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            if (window.lucide) lucide.createIcons();
+        }
+
+        window.onload = loadAggregateData;
+    </script>
+
+<script src="../scripts/scripts.js"></script>
+</body>
+</html>

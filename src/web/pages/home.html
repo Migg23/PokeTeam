@@ -21,7 +21,7 @@
             
             <div class="flex-1 overflow-y-auto p-6 flex flex-col items-center bg-gray-50">
                 <div class="w-24 h-24 bg-white rounded-full border-4 border-gray-800 shadow-md flex items-center justify-center mb-4 overflow-hidden">
-                    <i data-lucide="user" class="w-12 h-12 text-gray-400"></i>
+                    <img id="profile-avatar" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" class="w-full h-full object-contain p-2" alt="Trainer Avatar">
                 </div>
 
                 <h2 id="profile-username" class="text-xl font-black text-gray-800 tracking-wide text-center truncate w-full">
@@ -35,7 +35,7 @@
                     <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest border-b-2 border-gray-200 pb-1 mb-4">Battle Record</h3>
                 </div>
 
-                <div class="w-full grid grid-cols-2 gap-3">
+                <div class="w-full grid grid-cols-2 gap-3 mb-8">
                     <div class="bg-green-50 border-2 border-green-200 rounded-xl p-3 flex flex-col items-center justify-center shadow-sm">
                         <span class="text-[10px] font-bold text-green-600 uppercase tracking-wider">Wins</span>
                         <span id="profile-wins" class="text-2xl font-black text-green-700">0</span>
@@ -46,6 +46,10 @@
                         <span id="profile-losses" class="text-2xl font-black text-red-700">0</span>
                     </div>
                 </div>
+
+                <button onclick="openProfileModal()" class="w-full mt-auto bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-md transition-all uppercase tracking-wider text-sm border-b-4 border-black active:translate-y-1 active:border-b-0">
+                    <i data-lucide="settings" class="w-5 h-5"></i> Edit Profile
+                </button>
             </div>
         </div>
 
@@ -60,14 +64,107 @@
                     Welcome to <span class="text-red-600">PokeTeam</span>
                 </h1>
                 <p class="text-xl text-gray-700 font-medium mb-12">
-                    Browse the Pokédex on the left to learn about different Pokémon. When you're ready, head over to the Teams page to start assembling your dream squad!
+                    Your central hub for competitive team building. Filter species, calculate optimal natures, and manage your rosters before stepping onto the battlefield.
                 </p>
                 <a href="myTeams.html" class="flex items-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-black text-2xl px-8 py-5 rounded-2xl shadow-xl border-b-4 border-yellow-600 active:translate-y-1 active:border-b-0 active:mb-1 transition-all uppercase tracking-widest no-underline">
                     My Teams <i data-lucide="chevron-right" class="w-8 h-8"></i>
                 </a>
             </div>
         </div>
+    </div>
 
+    <div id="profile-modal" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl border-4 border-gray-900 shadow-2xl w-full max-w-2xl flex flex-col overflow-hidden max-h-[90vh]">
+            
+            <div class="p-4 bg-gray-900 flex justify-between items-center text-white">
+                <h2 class="text-xl font-black uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="settings" class="w-5 h-5"></i> Trainer Terminal
+                </h2>
+                <button onclick="closeProfileModal()" class="p-2 hover:bg-gray-700 rounded-lg transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <div class="flex border-b-2 border-gray-200 bg-gray-50">
+                <button onclick="switchProfileTab('edit')" id="tab-btn-edit" class="flex-1 py-3 font-bold uppercase tracking-wider text-sm border-b-4 border-blue-600 text-blue-600 transition-colors">My Profile</button>
+                <button onclick="switchProfileTab('search')" id="tab-btn-search" class="flex-1 py-3 font-bold uppercase tracking-wider text-sm border-b-4 border-transparent text-gray-500 hover:text-gray-800 transition-colors">Search Trainers</button>
+            </div>
+
+            <div id="tab-content-edit" class="p-6 overflow-y-auto flex-1">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Trainer Name</label>
+                            <input type="text" id="edit-profile-name" class="w-full p-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 outline-none">
+                        </div>
+                        
+                        <div>
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Avatar Sprite</label>
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-white rounded-lg border-2 border-gray-300 flex items-center justify-center shrink-0 shadow-sm">
+                                    <img id="edit-avatar-preview" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" class="w-8 h-8 object-contain">
+                                </div>
+                                <select id="edit-profile-avatar" class="w-full p-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 outline-none font-medium text-gray-700 cursor-pointer" onchange="document.getElementById('edit-avatar-preview').src = this.value">
+                                    <optgroup label="Trainer Items">
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png">Poké Ball</option>
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png">Great Ball</option>
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ultra-ball.png">Ultra Ball</option>
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png">Master Ball</option>
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/potion.png">Potion</option>
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/rare-candy.png">Rare Candy</option>
+                                    </optgroup>
+                                    <optgroup label="Pokémon Partners">
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png">Pikachu</option>
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png">Eevee</option>
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png">Bulbasaur</option>
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png">Charmander</option>
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png">Squirtle</option>
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/143.png">Snorlax</option>
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/94.png">Gengar</option>
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/149.png">Dragonite</option>
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/150.png">Mewtwo</option>
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/448.png">Lucario</option>
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/39.png">Jigglypuff</option>
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/52.png">Meowth</option>
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/54.png">Psyduck</option>
+                                        <option value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/175.png">Togepi</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Wins</label>
+                                <input type="number" id="edit-profile-wins" class="w-full p-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Losses</label>
+                                <input type="number" id="edit-profile-losses" class="w-full p-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 outline-none">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col justify-end space-y-3">
+                        <button onclick="saveUserProfile()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm">
+                            <i data-lucide="save" class="w-5 h-5"></i> Save Changes
+                        </button>
+                        <button onclick="deleteUserProfile()" class="w-full bg-red-100 hover:bg-red-200 text-red-700 font-bold py-3 rounded-xl uppercase tracking-wider flex items-center justify-center gap-2 border-2 border-red-200 transition-colors">
+                            <i data-lucide="trash-2" class="w-5 h-5"></i> Delete Profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-content-search" class="p-6 overflow-y-auto flex-1 hidden flex-col">
+                <div class="relative mb-6">
+                    <i data-lucide="search" class="absolute left-3 top-3 w-5 h-5 text-gray-400"></i>
+                    <input type="text" id="trainer-search-input" oninput="handleTrainerSearch(this.value)" placeholder="Search trainers by name or ID..." class="w-full pl-10 pr-4 py-3 bg-gray-100 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none font-medium">
+                </div>
+                <div id="trainer-search-results" class="grid grid-cols-1 sm:grid-cols-2 gap-4 auto-rows-max">
+                    </div>
+            </div>
+
+        </div>
     </div>
 
     <script>
@@ -75,8 +172,6 @@
             .then(response => response.text())
             .then(data => {
                 document.getElementById('nav-placeholder').innerHTML = data;
-                
-                // Initialize Lucide icons for the newly injected navbar content
                 if (window.lucide) {
                     lucide.createIcons();
                 }
@@ -84,7 +179,6 @@
     </script>
     <script src="../scripts/scripts.js"></script>
     <script>
-        // Initialize Lucide icons for the static content already on the page
         lucide.createIcons();
     </script>
 </body>

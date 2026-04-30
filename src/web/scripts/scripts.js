@@ -2,15 +2,40 @@
 // MOCK DATABASE
 // ==========================================
 const pokedexDb = [
-    { id: 1, speciesName: "Charizard", type1: "Fire", type2: "Flying", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png", hp: 78, atk: 84, def: 78, spatk: 109, spdef: 85, speed: 100, rarity: "Rare", genId: 1, abilities: ["Blaze", "Solar Power"] },
-    { id: 2, speciesName: "Gengar", type1: "Ghost", type2: "Poison", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/94.png", hp: 60, atk: 65, def: 60, spatk: 130, spdef: 75, speed: 110, rarity: "Rare", genId: 1, abilities: ["Cursed Body"] },
-    { id: 3, speciesName: "Garchomp", type1: "Dragon", type2: "Ground", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/445.png", hp: 108, atk: 130, def: 95, spatk: 80, spdef: 85, speed: 102, rarity: "Rare", genId: 4, abilities: ["Sand Veil", "Rough Skin"] },
-    { id: 4, speciesName: "Pikachu", type1: "Electric", type2: null, img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png", hp: 35, atk: 55, def: 40, spatk: 50, spdef: 50, speed: 90, rarity: "Common", genId: 1, abilities: ["Static", "Lightning Rod"] },
-    { id: 5, speciesName: "Snorlax", type1: "Normal", type2: null, img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/143.png", hp: 160, atk: 110, def: 65, spatk: 65, spdef: 110, speed: 30, rarity: "Uncommon", genId: 1, abilities: ["Immunity", "Thick Fat", "Gluttony"] },
-    { id: 6, speciesName: "Gyarados", type1: "Water", type2: "Flying", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/130.png", hp: 95, atk: 125, def: 79, spatk: 60, spdef: 100, speed: 81, rarity: "Uncommon", genId: 1, abilities: ["Intimidate", "Moxie"] }
+    { id: 1, speciesName: "Charizard", type1: "Fire", type2: "Flying", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png", hp: 78, atk: 84, def: 78, spatk: 109, spdef: 85, speed: 100, rarity: "Rare", genId: 1, region: "Kanto", abilities: ["Blaze", "Solar Power"] },
+    { id: 2, speciesName: "Gengar", type1: "Ghost", type2: "Poison", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/94.png", hp: 60, atk: 65, def: 60, spatk: 130, spdef: 75, speed: 110, rarity: "Rare", genId: 1, region: "Kanto", abilities: ["Cursed Body"] },
+    { id: 3, speciesName: "Garchomp", type1: "Dragon", type2: "Ground", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/445.png", hp: 108, atk: 130, def: 95, spatk: 80, spdef: 85, speed: 102, rarity: "Rare", genId: 4, region: "Sinnoh", abilities: ["Sand Veil", "Rough Skin"] },
+    { id: 4, speciesName: "Pikachu", type1: "Electric", type2: null, img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png", hp: 35, atk: 55, def: 40, spatk: 50, spdef: 50, speed: 90, rarity: "Common", genId: 1, region: "Kanto", abilities: ["Static", "Lightning Rod"] },
+    { id: 5, speciesName: "Snorlax", type1: "Normal", type2: null, img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/143.png", hp: 160, atk: 110, def: 65, spatk: 65, spdef: 110, speed: 30, rarity: "Uncommon", genId: 1, region: "Kanto", abilities: ["Immunity", "Thick Fat", "Gluttony"] },
+    { id: 6, speciesName: "Gyarados", type1: "Water", type2: "Flying", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/130.png", hp: 95, atk: 125, def: 79, spatk: 60, spdef: 100, speed: 81, rarity: "Uncommon", genId: 1, region: "Kanto", abilities: ["Intimidate", "Moxie"] }
 ];
 
 const allNatures = ['Hardy', 'Lonely', 'Brave', 'Adamant', 'Naughty', 'Bold', 'Docile', 'Relaxed', 'Impish', 'Lax', 'Timid', 'Hasty', 'Serious', 'Jolly', 'Naive', 'Modest', 'Mild', 'Quiet', 'Bashful', 'Rash', 'Calm', 'Gentle', 'Sassy', 'Careful', 'Quirky'];
+
+// --- NEW: POKEMON TYPE COLORS ---
+function getTypeColorClass(type) {
+    const typeColors = {
+        "Normal": "bg-gray-400 text-white",
+        "Fire": "bg-red-500 text-white",
+        "Water": "bg-blue-500 text-white",
+        "Electric": "bg-yellow-400 text-yellow-900",
+        "Grass": "bg-green-500 text-white",
+        "Ice": "bg-cyan-300 text-cyan-900",
+        "Fighting": "bg-red-700 text-white",
+        "Poison": "bg-purple-500 text-white",
+        "Ground": "bg-yellow-600 text-white",
+        "Flying": "bg-sky-400 text-sky-900",
+        "Psychic": "bg-pink-500 text-white",
+        "Bug": "bg-lime-500 text-white",
+        "Rock": "bg-yellow-800 text-white",
+        "Ghost": "bg-purple-800 text-white",
+        "Dragon": "bg-indigo-600 text-white",
+        "Dark": "bg-gray-800 text-white",
+        "Steel": "bg-slate-400 text-white",
+        "Fairy": "bg-pink-300 text-pink-900"
+    };
+    return typeColors[type] || "bg-gray-500 text-white";
+}
 
 // ==========================================
 // LOCAL STORAGE MANAGER
@@ -29,30 +54,190 @@ function saveTeams(teams) {
 }
 
 // ==========================================
-// SHARED POKEDEX RENDERING (Sidebar)
+// USER PROFILE & TRAINER SEARCH LOGIC
 // ==========================================
-function renderPokedexSidebar() {
+const mockTrainerDb = [
+    { id: "TR-001", username: "AshKetchum", wins: 152, losses: 14, avatar: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png" },
+    { id: "TR-002", username: "GaryOak", wins: 240, losses: 3, avatar: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png" },
+    { id: "TR-003", username: "MistyWaterflower", wins: 85, losses: 22, avatar: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/120.png" },
+    { id: "TR-004", username: "BrockRock", wins: 95, losses: 18, avatar: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/95.png" },
+    { id: "TR-005", username: "Cynthia", wins: 500, losses: 2, avatar: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/445.png" }
+];
+
+function getCurrentUser() {
+    const stored = localStorage.getItem('currentUser');
+    if (stored) return JSON.parse(stored);
+
+    const loginName = localStorage.getItem('trainerName') || "New Trainer";
+    const defaultUser = {
+        id: "TR-" + Math.floor(Math.random() * 9000 + 1000), 
+        username: loginName,
+        wins: 0,
+        losses: 0,
+        avatar: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
+    };
+    
+    localStorage.setItem('currentUser', JSON.stringify(defaultUser));
+    return defaultUser;
+}
+
+function renderTrainerSidebar() {
+    const user = getCurrentUser();
+    
+    const nameEl = document.getElementById('profile-username');
+    if(nameEl) {
+        nameEl.textContent = user.username;
+        document.getElementById('profile-userid').textContent = `ID: ${user.id}`;
+        document.getElementById('profile-wins').textContent = user.wins;
+        document.getElementById('profile-losses').textContent = user.losses;
+        
+        const avatarEl = document.getElementById('profile-avatar');
+        if (avatarEl) avatarEl.src = user.avatar;
+    }
+}
+
+function openProfileModal() {
+    const user = getCurrentUser();
+    
+    document.getElementById('edit-profile-name').value = user.username;
+    document.getElementById('edit-profile-wins').value = user.wins;
+    document.getElementById('edit-profile-losses').value = user.losses;
+
+    const avatarSelect = document.getElementById('edit-profile-avatar');
+    if(avatarSelect) {
+        avatarSelect.value = user.avatar;
+        if (!avatarSelect.value) avatarSelect.value = avatarSelect.options[0].value;
+        
+        const preview = document.getElementById('edit-avatar-preview');
+        if(preview) preview.src = avatarSelect.value;
+    }
+
+    switchProfileTab('edit');
+
+    document.getElementById('profile-modal').classList.remove('hidden');
+    document.getElementById('profile-modal').classList.add('flex');
+}
+
+function closeProfileModal() {
+    document.getElementById('profile-modal').classList.add('hidden');
+    document.getElementById('profile-modal').classList.remove('flex');
+}
+
+function switchProfileTab(tabName) {
+    const tabEditBtn = document.getElementById('tab-btn-edit');
+    const tabSearchBtn = document.getElementById('tab-btn-search');
+    const contentEdit = document.getElementById('tab-content-edit');
+    const contentSearch = document.getElementById('tab-content-search');
+
+    if (!tabEditBtn) return; 
+
+    if (tabName === 'edit') {
+        tabEditBtn.className = "flex-1 py-3 font-bold uppercase tracking-wider text-sm border-b-4 border-blue-600 text-blue-600 transition-colors";
+        tabSearchBtn.className = "flex-1 py-3 font-bold uppercase tracking-wider text-sm border-b-4 border-transparent text-gray-500 hover:text-gray-800 transition-colors";
+        contentEdit.classList.remove('hidden');
+        contentSearch.classList.add('hidden');
+    } else {
+        tabSearchBtn.className = "flex-1 py-3 font-bold uppercase tracking-wider text-sm border-b-4 border-blue-600 text-blue-600 transition-colors";
+        tabEditBtn.className = "flex-1 py-3 font-bold uppercase tracking-wider text-sm border-b-4 border-transparent text-gray-500 hover:text-gray-800 transition-colors";
+        contentSearch.classList.remove('hidden');
+        contentSearch.classList.add('flex');
+        
+        handleTrainerSearch(""); 
+    }
+}
+
+function saveUserProfile() {
+    const user = getCurrentUser();
+    
+    user.username = document.getElementById('edit-profile-name').value;
+    user.avatar = document.getElementById('edit-profile-avatar').value;
+    user.wins = parseInt(document.getElementById('edit-profile-wins').value) || 0;
+    user.losses = parseInt(document.getElementById('edit-profile-losses').value) || 0;
+
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    renderTrainerSidebar();
+    closeProfileModal();
+}
+
+function deleteUserProfile() {
+    if (confirm("WARNING: Are you sure you want to delete your profile? This cannot be undone.")) {
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('trainerName');
+        localStorage.removeItem('pokeTeams'); 
+        window.location.href = 'login.html'; 
+    }
+}
+
+function handleTrainerSearch(query) {
+    const container = document.getElementById('trainer-search-results');
+    const q = query.toLowerCase();
+    
+    const results = mockTrainerDb.filter(t => 
+        t.username.toLowerCase().includes(q) || 
+        t.id.toLowerCase().includes(q)
+    );
+
+    container.innerHTML = "";
+
+    if (results.length === 0) {
+        container.innerHTML = `<p class="col-span-full text-center text-gray-400 font-bold uppercase text-sm py-8">No trainers found.</p>`;
+        return;
+    }
+
+    results.forEach(trainer => {
+        container.innerHTML += `
+            <div class="bg-white border-2 border-gray-200 rounded-xl p-3 flex items-center gap-4 hover:border-blue-400 transition-colors">
+                <img src="${trainer.avatar}" class="w-12 h-12 bg-gray-100 rounded-full border border-gray-300 object-contain p-1">
+                <div class="flex-1 min-w-0">
+                    <div class="font-bold text-gray-800 truncate">${trainer.username}</div>
+                    <div class="text-[10px] text-gray-500 uppercase tracking-wider">${trainer.id}</div>
+                </div>
+                <div class="text-right">
+                    <div class="text-xs font-black text-green-600">${trainer.wins} W</div>
+                    <div class="text-xs font-black text-red-600">${trainer.losses} L</div>
+                </div>
+            </div>
+        `;
+    });
+}
+
+// ==========================================
+// SHARED POKEDEX RENDERER
+// ==========================================
+function renderPokedexSidebar(searchTerm = "") {
     const list = document.getElementById('pokedex-list');
     if (!list) return; 
     
     list.innerHTML = "";
-    pokedexDb.forEach(pokemon => {
+    const filtered = pokedexDb.filter(p => p.speciesName.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    filtered.forEach(pokemon => {
+        // Also updated the sidebar to show the colored type badges
         list.innerHTML += `
             <div class="pokemon-card bg-gray-50 border-2 border-gray-300 rounded-xl p-2 flex items-center gap-3 cursor-grab hover:border-blue-500 transition-all" 
                  draggable="true" ondragstart="drag(event, '${pokemon.speciesName}')">
                 <img src="${pokemon.img}" alt="${pokemon.speciesName}" class="w-12 h-12" draggable="false">
                 <div>
                     <div class="font-bold text-gray-800">${pokemon.speciesName}</div>
-                    <div class="text-[10px] text-gray-500 uppercase tracking-wider">#${pokemon.id} | ${pokemon.type1}</div>
+                    <div class="flex items-center gap-1 mt-1 text-[10px] text-gray-500 uppercase tracking-wider">
+                        #${pokemon.id} | 
+                        <span class="px-1.5 py-0.5 rounded-md ${getTypeColorClass(pokemon.type1)}">${pokemon.type1}</span>
+                        ${pokemon.type2 ? `<span class="px-1.5 py-0.5 rounded-md ${getTypeColorClass(pokemon.type2)}">${pokemon.type2}</span>` : ''}
+                    </div>
                 </div>
             </div>
         `;
     });
-    if(window.lucide) lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
+}
+
+const searchInput = document.getElementById('pokedex-search');
+if (searchInput) {
+    searchInput.addEventListener('input', (e) => renderPokedexSidebar(e.target.value));
 }
 
 // ==========================================
-// PAGE: MY TEAMS (myTeams.html)
+// PAGE: MY TEAMS
 // ==========================================
 function initMyTeams() {
     const grid = document.getElementById('teams-grid');
@@ -116,7 +301,7 @@ function deleteTeam(id) {
 }
 
 // ==========================================
-// PAGE: TEAM MEMBER EDIT (teamMemberView.html)
+// PAGE: TEAM MEMBER EDIT
 // ==========================================
 let currentTeamId = null;
 let currentTeam = null;
@@ -131,6 +316,7 @@ function initEditView() {
     currentTeam = teams.find(t => t.id === currentTeamId);
 
     if (!currentTeam) {
+        alert("Team not found! Returning to teams page.");
         window.location.href = "myTeams.html";
         return;
     }
@@ -167,7 +353,7 @@ function drop(ev, slotIndex) {
     const pokeData = pokedexDb.find(p => p.speciesName === speciesName);
     
     currentTeam.members[slotIndex] = {
-        speciesName: speciesName, level: 50, nature: "Hardy", ability: pokeData.abilities[0], isEditing: false
+        speciesName: speciesName, level: 50, nature: "Hardy", ability: pokeData ? pokeData.abilities[0] : "Default", isEditing: false
     };
     saveCurrentTeamState();
     renderSlots();
@@ -182,7 +368,7 @@ function renderSlots() {
         if (!slotDiv) return;
         
         if (!member) {
-            slotDiv.className = "team-slot relative rounded-xl border-4 flex flex-col overflow-hidden h-[26rem] transition-all border-dashed border-gray-300 bg-gray-100";
+            slotDiv.className = "team-slot relative rounded-xl border-4 flex flex-col overflow-hidden h-[28rem] transition-all border-dashed border-gray-300 bg-gray-100";
             slotDiv.innerHTML = `
                 <div class="flex flex-col items-center justify-center h-full text-gray-400 pointer-events-none">
                     <div class="w-16 h-16 border-4 border-dashed border-gray-300 rounded-full flex items-center justify-center mb-3"><span class="text-2xl font-black text-gray-300">?</span></div>
@@ -197,66 +383,107 @@ function renderSlots() {
         const natureOptionsHtml = allNatures.map(nat => `<option value="${nat}" ${member.nature === nat ? 'selected' : ''}>${nat}</option>`).join('');
 
         if (member.isEditing) {
-            slotDiv.className = "team-slot relative rounded-xl border-4 flex flex-col overflow-hidden h-[26rem] transition-all border-blue-400 bg-white shadow-lg";
+            slotDiv.className = "team-slot relative rounded-xl border-4 flex flex-col overflow-hidden h-[28rem] transition-all border-blue-400 bg-white shadow-lg";
             slotDiv.innerHTML = `
-                <div class="p-4 bg-blue-50 border-b border-blue-200 flex justify-center">
-                    <button onclick="openSearchModal(${index})" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 shadow-md transition-colors w-full justify-center uppercase tracking-wider text-sm">
-                        <i data-lucide="search" class="w-4 h-4"></i> Search Database
+                <div class="p-3 bg-blue-50 flex flex-col items-center relative shrink-0 border-b-2 border-blue-200">
+                    <button onclick="openSearchModal(${index})" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white font-bold p-2 rounded-lg flex items-center justify-center shadow-md transition-colors" title="Replace Pokemon">
+                        <i data-lucide="search" class="w-4 h-4"></i>
                     </button>
+                    
+                    <img src="${pokeData.img}" class="w-20 h-20 object-contain drop-shadow-md z-0" draggable="false">
+                    <div class="font-black text-blue-900 tracking-wide uppercase mt-1 z-0 text-lg">${pokeData.speciesName}</div>
+                    
+                    <div class="w-full mt-3 grid grid-cols-2 gap-2 text-left">
+                        <div class="col-span-2 flex gap-2">
+                            <div class="w-1/3">
+                                <label class="text-[9px] font-bold text-blue-800 uppercase tracking-wider">Level</label>
+                                <input type="number" id="edit-level-${index}" value="${member.level}" min="1" max="100" class="w-full border-2 border-blue-300 rounded p-1.5 text-xs font-bold text-gray-800 focus:ring-2 focus:ring-blue-400 outline-none">
+                            </div>
+                            <div class="w-2/3">
+                                <label class="text-[9px] font-bold text-blue-800 uppercase tracking-wider">Nature</label>
+                                <select id="edit-nature-${index}" class="w-full border-2 border-blue-300 rounded p-1.5 text-xs font-bold text-gray-800 focus:ring-2 focus:ring-blue-400 outline-none">${natureOptionsHtml}</select>
+                            </div>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="text-[9px] font-bold text-blue-800 uppercase tracking-wider">Exclusive Ability</label>
+                            <select id="edit-ability-${index}" class="w-full border-2 border-blue-300 rounded p-1.5 text-xs font-bold text-gray-800 focus:ring-2 focus:ring-blue-400 outline-none">${abilityOptionsHtml}</select>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="p-3 flex-1 overflow-y-auto text-sm flex flex-col justify-center">
-                    <div class="grid grid-cols-1 gap-4 mb-4">
-                        <div>
-                            <label class="text-[10px] font-bold text-gray-500 uppercase">Level</label>
-                            <input type="number" id="edit-level-${index}" value="${member.level}" min="1" max="100" class="w-full border-2 border-gray-300 rounded-lg p-2 font-bold text-gray-800">
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-bold text-gray-500 uppercase">Nature</label>
-                            <select id="edit-nature-${index}" class="w-full border-2 border-gray-300 rounded-lg p-2 font-bold text-gray-800">${natureOptionsHtml}</select>
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-bold text-gray-500 uppercase">Exclusive Ability</label>
-                            <select id="edit-ability-${index}" class="w-full border-2 border-gray-300 rounded-lg p-2 font-bold text-gray-800">${abilityOptionsHtml}</select>
-                        </div>
+
+                <div class="p-3 flex-1 overflow-y-auto flex flex-col justify-between bg-white relative">
+                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 text-center w-full block">Base Species Stats</div>
+                    <div class="grid grid-cols-3 gap-2 mb-2">
+                        <div class="bg-gray-50 border-2 border-gray-100 rounded-lg p-2 text-center"><div class="text-[10px] text-gray-400 font-bold uppercase">HP</div><div class="text-sm font-black text-gray-800">${pokeData.hp}</div></div>
+                        <div class="bg-gray-50 border-2 border-gray-100 rounded-lg p-2 text-center"><div class="text-[10px] text-gray-400 font-bold uppercase">ATK</div><div class="text-sm font-black text-gray-800">${pokeData.atk}</div></div>
+                        <div class="bg-gray-50 border-2 border-gray-100 rounded-lg p-2 text-center"><div class="text-[10px] text-gray-400 font-bold uppercase">DEF</div><div class="text-sm font-black text-gray-800">${pokeData.def}</div></div>
+                        <div class="bg-gray-50 border-2 border-gray-100 rounded-lg p-2 text-center"><div class="text-[10px] text-gray-400 font-bold uppercase">SpA</div><div class="text-sm font-black text-gray-800">${pokeData.spatk}</div></div>
+                        <div class="bg-gray-50 border-2 border-gray-100 rounded-lg p-2 text-center"><div class="text-[10px] text-gray-400 font-bold uppercase">SpD</div><div class="text-sm font-black text-gray-800">${pokeData.spdef}</div></div>
+                        <div class="bg-gray-50 border-2 border-gray-100 rounded-lg p-2 text-center"><div class="text-[10px] text-gray-400 font-bold uppercase">SPD</div><div class="text-sm font-black text-gray-800">${pokeData.speed}</div></div>
+                    </div>
+
+                    <div class="border-t border-gray-200 pt-2 mt-auto text-center w-full">
+                        <div class="text-[9px] text-gray-400 uppercase font-bold tracking-wider">Dex #${pokeData.id} • Gen ${pokeData.genId} • ${pokeData.region} • ${pokeData.rarity}</div>
                     </div>
                 </div>
 
                 <div class="p-2 border-t flex gap-2 bg-gray-50 shrink-0">
-                    <button onclick="saveSlot(${index})" class="flex-1 bg-green-500 text-white font-bold py-2 rounded-lg hover:bg-green-600 flex justify-center items-center gap-1 uppercase tracking-wider text-sm"><i data-lucide="save" class="w-4 h-4"></i> Save</button>
+                    <button onclick="saveSlot(${index})" class="flex-1 bg-green-500 text-white font-bold py-2 rounded-lg hover:bg-green-600 flex justify-center items-center gap-1 uppercase tracking-wider text-sm shadow-sm"><i data-lucide="save" class="w-4 h-4"></i> Save Profile</button>
                 </div>`;
         } else {
-            slotDiv.className = "team-slot relative rounded-xl border-4 flex flex-col overflow-hidden h-[26rem] transition-all border-gray-800 bg-white shadow-md group";
+            slotDiv.className = "team-slot relative rounded-xl border-4 flex flex-col overflow-hidden h-[28rem] transition-all border-gray-800 bg-white shadow-md group";
             slotDiv.innerHTML = `
-                <div class="p-3 bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center relative h-48 shrink-0">
+                <div class="p-3 bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center relative shrink-0 border-b-2 border-gray-200">
                     <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                         <button onclick="toggleEdit(${index})" class="p-1.5 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-500 hover:text-white transition-colors" title="Edit"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
                         <button onclick="deleteSlot(${index})" class="p-1.5 bg-red-100 text-red-600 rounded-md hover:bg-red-500 hover:text-white transition-colors" title="Remove"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     </div>
-                    <img src="${pokeData.img}" class="w-24 h-24 object-contain drop-shadow-md z-0" draggable="false">
-                    <div class="font-black text-gray-800 tracking-wide uppercase mt-2 text-lg z-0">${pokeData.speciesName}</div>
-                    <div class="flex gap-1 mt-1 z-0">
-                        <span class="text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-bold bg-gray-800 text-white">${pokeData.type1}</span>
-                        ${pokeData.type2 ? `<span class="text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-bold bg-gray-500 text-white">${pokeData.type2}</span>` : ''}
+                    
+                    <img src="${pokeData.img}" class="w-20 h-20 object-contain drop-shadow-md z-0" draggable="false">
+                    <div class="font-black text-gray-800 tracking-wide uppercase mt-1 z-0 text-lg">${pokeData.speciesName}</div>
+                    
+                    <div class="flex gap-1 mt-1 z-0 mb-3">
+                        <span class="text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-bold shadow-sm ${getTypeColorClass(pokeData.type1)}">${pokeData.type1}</span>
+                        ${pokeData.type2 ? `<span class="text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-bold shadow-sm ${getTypeColorClass(pokeData.type2)}">${pokeData.type2}</span>` : ''}
+                    </div>
+
+                    <div class="w-full bg-white bg-opacity-70 rounded-lg p-2 text-center grid grid-cols-3 gap-1 shadow-sm border border-gray-300">
+                        <div><span class="block text-[9px] font-bold text-gray-500 uppercase tracking-wider">Lv</span> <span class="font-black text-gray-800">${member.level}</span></div>
+                        <div><span class="block text-[9px] font-bold text-gray-500 uppercase tracking-wider">Nature</span> <span class="font-bold text-gray-800 truncate block px-1">${member.nature}</span></div>
+                        <div><span class="block text-[9px] font-bold text-gray-500 uppercase tracking-wider">Ability</span> <span class="font-bold text-gray-800 truncate block px-1">${member.ability}</span></div>
                     </div>
                 </div>
 
-                <div class="p-4 bg-gray-50 border-t-2 border-gray-200 flex-1 flex flex-col relative justify-between">
-                    <div class="flex justify-between items-center bg-white p-2 border-2 border-gray-200 rounded-lg mb-2">
-                        <div class="text-center"><div class="text-[10px] text-gray-400 font-bold uppercase">Level</div><div class="font-black text-gray-800">${member.level}</div></div>
-                        <div class="text-center"><div class="text-[10px] text-gray-400 font-bold uppercase">Nature</div><div class="font-bold text-gray-700">${member.nature}</div></div>
-                    </div>
-                    <div class="bg-white p-2 border-2 border-gray-200 rounded-lg text-center truncate mb-4">
-                        <div class="text-[10px] text-gray-400 font-bold uppercase">Ability</div>
-                        <div class="font-bold text-gray-700">${member.ability}</div>
+                <div class="p-4 flex-1 flex flex-col relative justify-between bg-white">
+                    <div class="grid grid-cols-3 gap-2 flex-1 content-start mt-2">
+                        <div class="bg-gray-50 border-2 border-gray-100 rounded-xl p-2 flex flex-col items-center justify-center shadow-sm">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">HP</span>
+                            <span class="text-xl font-black text-green-500">${pokeData.hp}</span>
+                        </div>
+                        <div class="bg-gray-50 border-2 border-gray-100 rounded-xl p-2 flex flex-col items-center justify-center shadow-sm">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">ATK</span>
+                            <span class="text-xl font-black text-red-500">${pokeData.atk}</span>
+                        </div>
+                        <div class="bg-gray-50 border-2 border-gray-100 rounded-xl p-2 flex flex-col items-center justify-center shadow-sm">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">DEF</span>
+                            <span class="text-xl font-black text-blue-500">${pokeData.def}</span>
+                        </div>
+                        <div class="bg-gray-50 border-2 border-gray-100 rounded-xl p-2 flex flex-col items-center justify-center shadow-sm">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">SpA</span>
+                            <span class="text-xl font-black text-purple-500">${pokeData.spatk}</span>
+                        </div>
+                        <div class="bg-gray-50 border-2 border-gray-100 rounded-xl p-2 flex flex-col items-center justify-center shadow-sm">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">SpD</span>
+                            <span class="text-xl font-black text-yellow-500">${pokeData.spdef}</span>
+                        </div>
+                        <div class="bg-gray-50 border-2 border-gray-100 rounded-xl p-2 flex flex-col items-center justify-center shadow-sm">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">SPD</span>
+                            <span class="text-xl font-black text-pink-500">${pokeData.speed}</span>
+                        </div>
                     </div>
 
-                    <div class="border-t border-gray-200 pt-3 mt-auto">
-                        <div class="flex justify-between text-[10px] text-gray-500 font-bold mb-1">
-                            <span>HP:${pokeData.hp}</span><span>A:${pokeData.atk}</span><span>D:${pokeData.def}</span>
-                            <span>SA:${pokeData.spatk}</span><span>SD:${pokeData.spdef}</span><span>Sp:${pokeData.speed}</span>
-                        </div>
-                        <div class="text-[10px] text-gray-400 text-center uppercase font-bold">Dex #${pokeData.id} • Gen ${pokeData.genId} • ${pokeData.rarity}</div>
+                    <div class="border-t border-gray-200 pt-3 mt-auto text-center w-full">
+                        <div class="text-[9px] text-gray-400 uppercase font-bold tracking-wider">Dex #${pokeData.id} • Gen ${pokeData.genId} • ${pokeData.region} • ${pokeData.rarity}</div>
                     </div>
                 </div>`;
         }
@@ -369,10 +596,11 @@ function renderModalResults(pokemonList) {
         <div onclick="selectPokemonFromModal('${p.speciesName}')" class="bg-white border-2 border-gray-200 rounded-xl p-4 flex flex-col items-center cursor-pointer hover:border-red-500 hover:shadow-xl transition-all group">
             <img src="${p.img}" class="w-24 h-24 object-contain group-hover:scale-110 transition-transform mb-2" draggable="false">
             <div class="font-black text-gray-800 uppercase tracking-wide text-center">${p.speciesName}</div>
-            <div class="text-[10px] font-bold text-gray-400 uppercase mt-1">ID: #${p.id}</div>
+            <div class="text-[9px] font-bold text-gray-400 uppercase mt-1 tracking-wider">ID: #${p.id} • ${p.region}</div>
+            
             <div class="flex gap-1 mt-2">
-                <span class="text-[10px] px-2 py-0.5 rounded-full uppercase font-bold bg-gray-800 text-white">${p.type1}</span>
-                ${p.type2 ? `<span class="text-[10px] px-2 py-0.5 rounded-full uppercase font-bold bg-gray-500 text-white">${p.type2}</span>` : ''}
+                <span class="text-[10px] px-2 py-0.5 rounded-full uppercase font-bold shadow-sm ${getTypeColorClass(p.type1)}">${p.type1}</span>
+                ${p.type2 ? `<span class="text-[10px] px-2 py-0.5 rounded-full uppercase font-bold shadow-sm ${getTypeColorClass(p.type2)}">${p.type2}</span>` : ''}
             </div>
         </div>
     `).join('');
@@ -403,14 +631,11 @@ function selectPokemonFromModal(speciesName) {
         isEditing: false
     };
 
-    // Replace slot if we clicked "Search Database" from an empty/existing slot
     if (activeSlotForModal !== null) {
         currentTeam.members[activeSlotForModal] = newMember;
     } 
-    // Add to first available slot if we clicked "Advanced Search" from the sidebar
     else {
         const emptySlotIndex = currentTeam.members.findIndex(member => member === null);
-        
         if (emptySlotIndex !== -1) {
             currentTeam.members[emptySlotIndex] = newMember;
         } else {
@@ -425,32 +650,42 @@ function selectPokemonFromModal(speciesName) {
 }
 
 // ==========================================
-// BOOTSTRAP APP
+// NAVBAR EVENT HANDLERS
 // ==========================================
-document.addEventListener("DOMContentLoaded", () => {
-    if (document.getElementById('pokedex-list') && typeof renderPokedexSidebar === "function") renderPokedexSidebar();
-    if (document.getElementById('teams-grid')) initMyTeams();
+function navigateToQuery(event, queryId) {
+    event.preventDefault();
+    sessionStorage.setItem('activeAggregateQuery', queryId);
     
-    if (document.getElementById('full-screen-search')) {
-        initEditView();
-        initModalFilters();
+    if (window.location.pathname.includes('querypage.html')) {
+        if (typeof loadReportData === 'function') loadReportData();
+    } else {
+        window.location.href = 'querypage.html';
     }
-});
+}
+
+function handleLogout(event) {
+    event.preventDefault();
+    sessionStorage.clear();
+    localStorage.clear();
+    window.location.href = 'login.html';
+}
 
 // ==========================================
 // BOOTSTRAP APP
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
-    // --- NEW: Load Trainer Profile Name ---
-    const savedName = localStorage.getItem('trainerName');
-    const profileNameEl = document.getElementById('profile-username');
-    if (profileNameEl && savedName) {
-        profileNameEl.textContent = savedName;
+    
+    if (document.getElementById('profile-username-display') || document.getElementById('profile-username')) {
+        renderTrainerSidebar();
     }
-    // --------------------------------------
 
-    if (document.getElementById('pokedex-list') && typeof renderPokedexSidebar === "function") renderPokedexSidebar();
-    if (document.getElementById('teams-grid')) initMyTeams();
+    if (document.getElementById('pokedex-list') && typeof renderPokedexSidebar === "function") {
+        renderPokedexSidebar();
+    }
+    
+    if (document.getElementById('teams-grid')) {
+        initMyTeams();
+    }
     
     if (document.getElementById('full-screen-search')) {
         initEditView();
