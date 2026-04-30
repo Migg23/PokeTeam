@@ -302,20 +302,72 @@ async function initMyTeams() {
 }
 
 window.addNewTeam = async function addNewTeam() {
+    toggleCreateTeamForm(true);
+};
+
+window.toggleCreateTeamForm = function toggleCreateTeamForm(forceOpen) {
+    const panel = document.getElementById("create-team-panel");
+    const errorText = document.getElementById("create-team-error");
+    const input = document.getElementById("new-team-name");
+
+    if (!panel) return;
+
+    const shouldOpen = typeof forceOpen === "boolean"
+        ? forceOpen
+        : panel.classList.contains("hidden");
+
+    panel.classList.toggle("hidden", !shouldOpen);
+
+    if (errorText) {
+        errorText.classList.add("hidden");
+        errorText.textContent = "";
+    }
+
+    if (!shouldOpen && input) {
+        input.value = "";
+    }
+
+    if (shouldOpen && input) {
+        input.focus();
+    }
+};
+
+window.submitCreateTeam = async function submitCreateTeam(event) {
+    event.preventDefault();
+
     const userId = getTrainerUserId();
     if (!userId) {
         window.location.href = "login.html";
         return;
     }
 
-    const teamName = prompt("Enter a team name:");
-    if (!teamName) return;
+    const teamNameInput = document.getElementById("new-team-name");
+    const errorText = document.getElementById("create-team-error");
+    const submitButton = event.target.querySelector("button[type='submit']");
+    const teamName = teamNameInput ? teamNameInput.value.trim() : "";
+
+    if (!teamName) {
+        if (errorText) {
+            errorText.textContent = "Team name is required.";
+            errorText.classList.remove("hidden");
+        }
+        return;
+    }
 
     try {
+        if (submitButton) submitButton.disabled = true;
         await apiPost(`/users/${userId}/teams/create`, { teamName });
+        toggleCreateTeamForm(false);
         await initMyTeams();
     } catch (error) {
-        alert(error.message);
+        if (errorText) {
+            errorText.textContent = error.message;
+            errorText.classList.remove("hidden");
+        } else {
+            alert(error.message);
+        }
+    } finally {
+        if (submitButton) submitButton.disabled = false;
     }
 };
 
