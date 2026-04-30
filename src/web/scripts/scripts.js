@@ -58,6 +58,115 @@ function saveTeams(teams) {
 }
 
 // ==========================================
+// API HELPERS
+// ==========================================
+function buildFormBody(payload) {
+    const body = new URLSearchParams();
+
+    Object.entries(payload).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+            body.append(key, value);
+        }
+    });
+
+    return body;
+}
+
+async function apiGet(path) {
+    const response = await fetch(`${API_BASE_URL}${path}`);
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || `Request failed: ${response.status}`);
+    }
+
+    return data;
+}
+
+async function apiPost(path, payload) {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: buildFormBody(payload),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || `Request failed: ${response.status}`);
+    }
+
+    return data;
+}
+
+function getTrainerUserId() {
+    return localStorage.getItem('trainerUserId');
+}
+
+function getTrainerName() {
+    return localStorage.getItem('trainerName');
+}
+
+function setTrainer(user) {
+    localStorage.setItem('trainerUserId', user.userId);
+    localStorage.setItem('trainerName', user.userName);
+}
+
+function clearTrainer() {
+    localStorage.removeItem('trainerUserId');
+    localStorage.removeItem('trainerName');
+}
+
+// ==========================================
+// LOGIN FLOW
+// ==========================================
+async function loginOrCreateTrainer(username) {
+    const trimmedName = username.trim();
+    if (!trimmedName) {
+        throw new Error("Trainer name is required");
+    }
+
+    const users = await apiGet("/users");
+    const existingUser = users.find(
+        user => user.userName.toLowerCase() === trimmedName.toLowerCase()
+    );
+
+    if (existingUser) {
+        setTrainer(existingUser);
+        return existingUser;
+    }
+
+    const createdResponse = await apiPost("/users/create", {
+        userName: trimmedName,
+        wins: 0,
+        losses: 0,
+    });
+
+    setTrainer(createdResponse.user);
+    return createdResponse.user;
+}
+
+window.handleLogin = async function handleLogin(event) {
+    event.preventDefault();
+
+    const usernameInput = document.getElementById('username-input');
+    const submitButton = event.target.querySelector("button[type='submit']");
+    const username = usernameInput ? usernameInput.value : "";
+
+    try {
+        if (submitButton) submitButton.disabled = true;
+        await loginOrCreateTrainer(username);
+        window.location.href = "home.html";
+    } catch (error) {
+        alert(error.message);
+    } finally {
+        if (submitButton) submitButton.disabled = false;
+    }
+};
+
+// ==========================================
 // USER PROFILE & TRAINER SEARCH LOGIC
 // ==========================================
 const mockTrainerDb = [
@@ -392,9 +501,9 @@ async function initEditView() {
     const urlParams = new URLSearchParams(window.location.search);
     currentTeamId = urlParams.get("teamId");
 
-    if (!currentTeam) {
+    if (!currentTeamId) {
         alert("Team not found! Returning to teams page.");
-        window.location.href = "myTeams.html";
+        window.location.href = "myteams.html";
         return;
     }
 
@@ -804,7 +913,7 @@ function handleLogout(event) {
 // ==========================================
 // BOOTSTRAP APP
 // ==========================================
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     
     if (document.getElementById('profile-username-display') || document.getElementById('profile-username')) {
         renderTrainerSidebar();
@@ -819,7 +928,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     if (document.getElementById('full-screen-search')) {
-        initEditView();
         initModalFilters();
         await initEditView();
     }
