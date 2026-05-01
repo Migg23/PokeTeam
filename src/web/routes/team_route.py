@@ -3,12 +3,15 @@ from flask import Blueprint, request
 from src.data_access.sql_command_executor import SqlCommandExecutor
 from src.pokemonApp.models.team import Team
 from src.pokemonApp.sql_team_repository import SqlTeamRepository
-
+from src.pokemonApp.sql_team_member_repository import SqlTeamMember
+from src.pokemonApp.sql_pokemon_repository import SqlPokemonRepository
 
 team_routes = Blueprint("team_routes", __name__)
 
 executor = SqlCommandExecutor()
 teams_repo = SqlTeamRepository(executor)
+team_member_repo = SqlTeamMember(executor)
+pokemon_repo = SqlPokemonRepository(executor)
 
 
 def serialize_team(team: Team) -> dict:
@@ -61,6 +64,19 @@ def delete_team(team_id):
 
     if team is None:
         return {"message": "Team not found"}, 404
+
+    team_members = team_member_repo.get_all_team_members(team.team_Id)
+
+    if team_members is not None:
+        pokemon = []
+        for x in range(len(team_members)):
+            member = team_members[x]
+            pokemon.append(pokemon_repo.get_pokemon_by_Id(member.pokedex_Id))
+            team_member_repo.delete_team_member(member.member_Id)
+        
+        for x in range(len(pokemon)):
+            pokedex_id = pokemon[x].pokedex_Id
+            pokemon_repo.delete_pokemon(pokedex_id)
 
     teams_repo.delete_team(team)
     return {"message": "Team deleted successfully"}
