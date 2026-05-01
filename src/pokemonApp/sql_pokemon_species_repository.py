@@ -10,7 +10,7 @@ class SqlPokemonSpecies(IPokemonSpeciesRepository):
     def create_pokemon_species(self, pokemon_species):
         sql = f"""
             INSERT INTO {self.executor.schema}.PokemonSpecies
-                (GenerationId, TypeOneId, TypeTwoId, SpeciesName, Rarity, Hp, Atk, SpAtk, Def, SpDef, Speed)
+                (GenId, TypeOneId, TypeTwoId, SpeciesName, Rarity, Hp, Atk, SpAtk, Def, SpDef, Speed)
             VALUES
                 (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
@@ -32,6 +32,41 @@ class SqlPokemonSpecies(IPokemonSpeciesRepository):
         
         with self.executor.transaction_scope() as connection:
             self.executor.execute_query(sql, connection, params)
+
+    def get_all_pokemon_species(self):
+        sql = f"""
+            SELECT *
+            FROM {self.executor.schema}.PokemonSpecies P
+            ORDER BY P.SpeciesName
+        """
+
+        with self.executor.transaction_scope() as connection:
+            temp = self.executor.execute_query(sql, connection)
+            rows_returned = self.executor.get_all_rows(temp)
+
+        if not rows_returned:
+            return []
+
+        species_list = []
+        for row in rows_returned:
+            species_list.append(
+                Pokemon_Species(
+                    species_Id=row["SpeciesId"],
+                    generation_Id=row["GenId"],
+                    type_one_Id=row["TypeOneId"],
+                    type_two_Id=row["TypeTwoId"],
+                    species_name=row["SpeciesName"],
+                    rarity=row["Rarity"],
+                    hp=row["Hp"],
+                    atk=row["Atk"],
+                    spatk=row["SpAtk"],
+                    deff=row["Def"],
+                    spdef=row["SpDef"],
+                    speed=row["Speed"],
+                )
+            )
+
+        return species_list
 
 
 

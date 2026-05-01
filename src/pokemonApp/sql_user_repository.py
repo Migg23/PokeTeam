@@ -86,18 +86,24 @@ class SqlUserRepository(IUserRepository):
         return da_users
     
 
-    def update_user(self, user_Id, wins, losses):
+    def update_user(self, user_Id, user_name, wins, losses):
         
         sql = f"""
             UPDATE {self.executor.schema}.[User]
             SET
+                UserName = %s,
                 Wins = %s,
                 Losses = %s
             FROM {self.executor.schema}.[User] U
             WHERE U.UserId = %s
         """
 
-        params = {"Wins": wins, "Losses": losses, "UserId": user_Id}
+        params = {
+            "UserName": user_name,
+            "Wins": wins,
+            "Losses": losses,
+            "UserId": user_Id,
+        }
 
         with self.executor.transaction_scope() as connection:
             self.executor.execute_query(sql,connection, params)

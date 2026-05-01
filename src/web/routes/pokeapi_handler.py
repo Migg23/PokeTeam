@@ -164,12 +164,20 @@ class PokeApiHandler:
 
     def _fetch_json(self, url: str):
         try:
-            with request.urlopen(url) as response:
+            api_request = request.Request(
+                url,
+                headers={
+                    "User-Agent": "PokeTeamApp/1.0",
+                    "Accept": "application/json",
+                },
+            )
+            with request.urlopen(api_request) as response:
                 return json.loads(response.read().decode("utf-8"))
         except error.HTTPError as exc:
             raise ValueError(f"PokeAPI request failed for {url}: {exc.code}") from exc
         except error.URLError as exc:
-            raise ValueError(f"Unable to reach PokeAPI for {url}") from exc
+            reason = getattr(exc, "reason", exc)
+            raise ValueError(f"Unable to reach PokeAPI for {url}: {reason}") from exc
 
     @staticmethod
     def _stat_value(stats_payload, stat_name: str):

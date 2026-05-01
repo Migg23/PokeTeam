@@ -17,7 +17,7 @@ class IUserRepository(ABC):
 
     
     @abstractmethod
-    def update_user(self, user_Id, wins,losses):
+    def update_user(self, user_Id, user_name, wins, losses):
         pass
 
     @abstractmethod

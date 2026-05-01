@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stat Summary - PokeTeam</title>
+    <link rel="stylesheet" href="../stylesheets/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="flex flex-col h-screen bg-gray-50 overflow-hidden" id="strength-aggregate-view">
+    <div id="nav-placeholder"></div>
+
+    <div class="flex-1 overflow-y-auto p-6 relative">
+        <div class="max-w-7xl mx-auto space-y-6">
+            <div class="bg-white p-6 rounded-xl border-2 border-gray-200 shadow-sm flex items-center justify-between gap-4 flex-wrap">
+                <div>
+                    <h1 class="text-3xl font-black text-gray-900 uppercase tracking-wide flex items-center gap-3">
+                        <i data-lucide="shield" class="text-red-600 w-8 h-8"></i>
+                        Team Strength Summary
+                    </h1>
+                    <p class="text-gray-600 font-medium mt-2">
+                        Compare each team by total combined species stats and ranking.
+                    </p>
+                </div>
+                <div class="bg-red-50 text-red-700 font-bold px-4 py-2 rounded-lg border border-red-200 shadow-inner whitespace-nowrap">
+                    Aggregate View 3/4
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md border-2 border-gray-200 overflow-hidden flex flex-col">
+                <div class="p-4 bg-gray-100 border-b-2 border-gray-200 flex items-center gap-2">
+                    <i data-lucide="table-2" class="w-5 h-5 text-gray-600"></i>
+                    <h2 class="text-lg font-bold text-gray-800 uppercase tracking-wide">Team Stat Totals</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse whitespace-nowrap">
+                        <thead>
+                            <tr class="bg-gray-50 border-b-2 border-gray-200 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                <th class="p-3">Rank</th>
+                                <th class="p-3">Team ID</th>
+                                <th class="p-3">HP</th>
+                                <th class="p-3">Attack</th>
+                                <th class="p-3">Defense</th>
+                                <th class="p-3">Sp. Atk</th>
+                                <th class="p-3">Sp. Def</th>
+                                <th class="p-3">Speed</th>
+                                <th class="p-3">Overall Total</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 text-sm" id="strength-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        fetch('nav.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('nav-placeholder').innerHTML = data;
+                if (window.lucide) lucide.createIcons();
+            });
+    </script>
+    <script src="../scripts/scripts.js"></script>
+</body>
+</html>

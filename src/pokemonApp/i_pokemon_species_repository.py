@@ -13,3 +13,7 @@ class IPokemonSpeciesRepository(ABC):
     @abstractmethod
     def get_pokemon_species_by_name(self, name):
         pass
+
+    @abstractmethod
+    def get_all_pokemon_species(self):
+        pass

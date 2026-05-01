@@ -52,6 +52,9 @@ def create_user():
     if wins is None or losses is None:
         return {"message": "wins and losses are required"}, 400
 
+    if wins < 0 or losses < 0:
+        return {"message": "wins and losses must be 0 or greater"}, 400
+
     user = User(userId=None, user_name=user_name, wins=wins, losses=losses)
     created_user = users_repo.create_user(user)
 
@@ -68,13 +71,17 @@ def update_user(user_id):
     if user is None:
         return {"message": "User not found"}, 404
 
+    user_name = request.form.get("userName")
     wins = request.form.get("wins", type=int)
     losses = request.form.get("losses", type=int)
 
-    if wins is None or losses is None:
-        return {"message": "wins and losses are required"}, 400
+    if not user_name or wins is None or losses is None:
+        return {"message": "userName, wins, and losses are required"}, 400
 
-    users_repo.update_user(user_id, wins, losses)
+    if wins < 0 or losses < 0:
+        return {"message": "wins and losses must be 0 or greater"}, 400
+
+    users_repo.update_user(user_id, user_name, wins, losses)
     updated_user = users_repo.get_user_by_Id(user_id)
 
     return {

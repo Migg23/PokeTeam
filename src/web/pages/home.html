@@ -75,6 +75,55 @@
 
     </div>
 
+    <div id="profile-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl border-4 border-gray-900 shadow-2xl overflow-hidden">
+            <div class="bg-red-500 text-white p-5 border-b-4 border-gray-900 flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-black uppercase tracking-wider">Edit Trainer</h2>
+                    <p class="text-sm text-red-100 font-medium">Update your displayed battle record</p>
+                </div>
+                <button type="button" onclick="closeProfileModal()" class="p-2 bg-red-700 rounded-lg hover:bg-red-800 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-5 bg-gray-50">
+                <div>
+                    <label for="edit-profile-name" class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">
+                        Trainer Name
+                    </label>
+                    <input id="edit-profile-name" type="text" class="w-full bg-white border-2 border-gray-300 rounded-lg p-3 text-gray-800 font-medium focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="edit-profile-wins" class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">
+                            Wins
+                        </label>
+                        <input id="edit-profile-wins" type="number" min="0" class="w-full bg-white border-2 border-gray-300 rounded-lg p-3 text-gray-800 font-medium focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all">
+                    </div>
+                    <div>
+                        <label for="edit-profile-losses" class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2">
+                            Losses
+                        </label>
+                        <input id="edit-profile-losses" type="number" min="0" class="w-full bg-white border-2 border-gray-300 rounded-lg p-3 text-gray-800 font-medium focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all">
+                    </div>
+                </div>
+
+                <input id="edit-profile-avatar" type="hidden" value="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png">
+
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="saveUserProfile()" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl shadow-md border-b-4 border-green-700 active:translate-y-1 active:border-b-0 transition-all uppercase">
+                        Save Changes
+                    </button>
+                    <button type="button" onclick="closeProfileModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-xl shadow-sm border-b-4 border-gray-400 active:translate-y-1 active:border-b-0 transition-all uppercase">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         fetch('nav.html')
             .then(response => response.text())

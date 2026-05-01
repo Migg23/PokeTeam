@@ -30,18 +30,10 @@ def serialize_pokemon(pokemon: Pokemon, pokemon_species, calculated_stats: dict)
     return {
         "pokedexId": pokemon.pokedex_Id,
         "speciesId": pokemon.species_Id,
-        "pokemonName": pokemon_species.species_name,
+        **serialize_species_summary(pokemon_species),
         "level": pokemon.level,
         "ability": pokemon.ability,
         "modifier": pokemon.nature,
-        "baseStats": {
-            "hp": pokemon_species.hp,
-            "atk": pokemon_species.atk,
-            "def": pokemon_species.deff,
-            "spAtk": pokemon_species.spatk,
-            "spDef": pokemon_species.spdef,
-            "speed": pokemon_species.speed,
-        },
         "calculatedStats": calculated_stats,
     }
 
@@ -57,11 +49,45 @@ def get_name_value():
 def build_species_response(pokemon_species, level, ability, modifier):
     calculated_stats = pokeapi_handler.calculate_stats(pokemon_species, level, modifier)
     return {
-        "pokemonName": pokemon_species.species_name,
-        "speciesId": pokemon_species.species_Id,
+        **serialize_species_summary(pokemon_species),
         "level": level,
         "ability": ability,
         "modifier": modifier,
+        "calculatedStats": calculated_stats,
+    }
+
+
+def get_rarity_label(rarity_value):
+    rarity_map = {
+        1: "Common",
+        2: "Uncommon",
+        3: "Rare",
+        4: "Epic",
+        5: "Legendary",
+    }
+    return rarity_map.get(rarity_value, f"Tier {rarity_value}")
+
+
+def serialize_species_summary(pokemon_species) -> dict:
+    type_one = type_repo.get_type_by_Id(pokemon_species.type_one_Id)
+    type_two = type_repo.get_type_by_Id(pokemon_species.type_two_Id) if pokemon_species.type_two_Id else None
+    generation = generation_repo.get_generation_by_id(pokemon_species.generation_Id)
+    region = (
+        region_repo.get_region_by_regionId(generation.region_Id)
+        if generation is not None else None
+    )
+
+    return {
+        "pokemonName": pokemon_species.species_name,
+        "speciesId": pokemon_species.species_Id,
+        "typeOne": type_one.name if type_one else None,
+        "typeTwo": type_two.name if type_two else None,
+        "genId": generation.gen_Id if generation else None,
+        "genName": generation.gen_Name if generation else None,
+        "regionId": region.region_Id if region else None,
+        "regionName": region.region_Name if region else None,
+        "rarity": pokemon_species.rarity,
+        "rarityLabel": get_rarity_label(pokemon_species.rarity),
         "baseStats": {
             "hp": pokemon_species.hp,
             "atk": pokemon_species.atk,
@@ -70,7 +96,6 @@ def build_species_response(pokemon_species, level, ability, modifier):
             "spDef": pokemon_species.spdef,
             "speed": pokemon_species.speed,
         },
-        "calculatedStats": calculated_stats,
     }
 
 
@@ -112,6 +137,21 @@ def get_pokemon(pokedex_id):
         pokemon.nature,
     )
     return serialize_pokemon(pokemon, pokemon_species, calculated_stats)
+
+
+@pokemon_routes.route("/pokemon-species", methods=["GET"])
+def get_pokemon_species():
+    search_term = (request.args.get("search") or "").strip().lower()
+    all_species = pokemon_species_repo.get_all_pokemon_species()
+
+    if search_term:
+        all_species = [
+            pokemon_species
+            for pokemon_species in all_species
+            if search_term in pokemon_species.species_name.lower()
+        ]
+
+    return [serialize_species_summary(pokemon_species) for pokemon_species in all_species]
 
 
 @pokemon_routes.route("/pokemon/search", methods=["POST"])

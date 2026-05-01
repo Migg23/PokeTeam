@@ -20,14 +20,13 @@
                 Pokédex
             </div>
             
-            <div class="p-3 bg-gray-100 border-b border-gray-200">
-                <button onclick="openSearchModal(null)" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 shadow-md transition-colors uppercase tracking-wider text-sm">
+            <div class="p-4 bg-gray-100 border-b border-gray-200">
+                <button onclick="openSearchModal(null)" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 shadow-md transition-colors uppercase tracking-wider text-sm">
                     <i data-lucide="search" class="w-4 h-4"></i> Advanced Search
                 </button>
             </div>
-            
-            <div class="flex-1 overflow-y-auto p-4 space-y-3" id="pokedex-list">
-            </div>
+
+            <div class="flex-1 bg-gray-50"></div>
         </div>
 
     <div class="flex-1 flex flex-col overflow-y-auto relative">
@@ -64,7 +63,7 @@
             <div class="w-80 bg-gray-100 p-6 border-r-2 border-gray-300 overflow-y-auto shadow-[inset_-4px_0_10px_rgba(0,0,0,0.05)]">
                 <div class="mb-6">
                     <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-2">Search Name</label>
-                    <input type="text" id="modal-search-text" oninput="applyModalFilters()" placeholder="e.g. Charizard..." class="w-full p-3 rounded-lg border-2 border-gray-300 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-200">
+                    <input type="text" id="modal-search-text" placeholder="e.g. Charizard..." class="w-full p-3 rounded-lg border-2 border-gray-300 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-200">
                 </div>
 
                 <div class="mb-6 bg-white p-3 rounded-lg border-2 border-gray-200">
@@ -76,15 +75,26 @@
                 </div>
 
                 <div class="mb-6">
-                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-2">Natures (Applies to Selection)</label>
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-2">Choose One Nature</label>
                     <div id="modal-natures-container" class="grid grid-cols-2 gap-2 text-sm bg-white p-3 rounded-lg border-2 border-gray-200 h-40 overflow-y-auto">
                     </div>
                 </div>
 
-                <div class="mb-6">
-                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-2">Exclusive Abilities</label>
+                <div id="modal-ability-step" class="mb-6 hidden">
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-2">Choose One Ability</label>
                     <div id="modal-abilities-container" class="space-y-2 text-sm bg-white p-3 rounded-lg border-2 border-gray-200 h-64 overflow-y-auto">
                     </div>
+                </div>
+
+                <p id="modal-search-error" class="hidden mb-4 text-sm font-bold text-red-600"></p>
+
+                <div class="space-y-3">
+                    <button id="modal-preview-button" onclick="previewPokemonSelection()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors uppercase tracking-wider text-sm">
+                        Preview Pokemon
+                    </button>
+                    <button id="modal-confirm-button" onclick="confirmPokemonSelection()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors uppercase tracking-wider text-sm disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed" disabled>
+                        Confirm Ability And Create
+                    </button>
                 </div>
             </div>
 

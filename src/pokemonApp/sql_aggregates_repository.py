@@ -22,7 +22,7 @@ class SqlAggregatesRepository(IAggregatesRepository):
                 INNER JOIN {self.executor.schema}.PokemonSpecies S
                     ON S.SpeciesId = P.SpeciesId
                 INNER JOIN {self.executor.schema}.Generation G
-                    ON G.GenId = S.GenerationId
+                    ON G.GenId = S.GenId
                 INNER JOIN {self.executor.schema}.Region R
                     ON R.RegionId = G.RegionId
             WHERE R.RegionName = %s
