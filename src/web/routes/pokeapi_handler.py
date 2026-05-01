@@ -9,6 +9,7 @@ from src.pokemonApp.models.type import Type
 
 class PokeApiHandler:
     BASE_URL = "https://pokeapi.co/api/v2"
+
     GENERATION_REGION_MAP = {
         "generation-i": ("Generation I", "Kanto"),
         "generation-ii": ("Generation II", "Johto"),
@@ -20,6 +21,7 @@ class PokeApiHandler:
         "generation-viii": ("Generation VIII", "Galar"),
         "generation-ix": ("Generation IX", "Paldea"),
     }
+
     NATURE_MODIFIERS = {
         "lonely": ("atk", "def"),
         "brave": ("atk", "speed"),
@@ -49,103 +51,44 @@ class PokeApiHandler:
         self.region_repo = region_repo
         self.generation_repo = generation_repo
 
-    def get_species_preview_data(self, pokemon_name: str):
-        normalized_name = self._normalize_name(pokemon_name)
-        pokemon_payload = self._fetch_json(f"{self.BASE_URL}/pokemon/{parse.quote(normalized_name.lower())}")
-        pokemon_species = self._get_or_create_species(normalized_name, pokemon_payload)
-        ability_options = self._extract_abilities(pokemon_payload)
+    def load_species_preview(self, pokemon_name):
+        clean_name = self.clean_name(pokemon_name)
+        pokemon_data = self.fetch_json(
+            f"{self.BASE_URL}/pokemon/{parse.quote(clean_name.lower())}"
+        )
+
+        pokemon_species = self.pokemon_species_repo.get_pokemon_species_by_name(clean_name)
+        if pokemon_species is None:
+            pokemon_species = self.create_species_from_api(clean_name, pokemon_data)
+
+        ability_options = []
+        for ability_entry in pokemon_data["abilities"]:
+            ability_name = self.pretty_name(ability_entry["ability"]["name"])
+            if ability_name not in ability_options:
+                ability_options.append(ability_name)
 
         return {
             "species": pokemon_species,
             "abilityOptions": ability_options,
         }
 
-    def validate_ability_for_species(self, pokemon_name: str, ability: str):
-        preview_data = self.get_species_preview_data(pokemon_name)
-        normalized_ability = self._normalize_comparison_value(ability)
+    def create_species_from_api(self, species_name, pokemon_data):
+        species_data = self.fetch_json(pokemon_data["species"]["url"])
 
-        for valid_ability in preview_data["abilityOptions"]:
-            if self._normalize_comparison_value(valid_ability) == normalized_ability:
-                return {
-                    "species": preview_data["species"],
-                    "ability": valid_ability,
-                    "abilityOptions": preview_data["abilityOptions"],
-                }
-
-        raise ValueError(f"{ability} is not a valid ability for {preview_data['species'].species_name}")
-
-    def _get_or_create_species(self, normalized_name: str, pokemon_payload: dict):
-        existing_species = self.pokemon_species_repo.get_pokemon_species_by_name(normalized_name)
-        if existing_species is not None:
-            return existing_species
-
-        species_payload = self._fetch_json(pokemon_payload["species"]["url"])
-
-        type_ids = self._get_or_create_types(pokemon_payload["types"])
-        generation_id = self._get_or_create_generation(species_payload["generation"]["name"])
-        rarity = self._determine_rarity(pokemon_payload["stats"])
-
-        species = Pokemon_Species(
-            species_Id=None,
-            generation_Id=generation_id,
-            type_one_Id=type_ids[0],
-            type_two_Id=type_ids[1] if len(type_ids) > 1 else None,
-            species_name=normalized_name,
-            rarity=rarity,
-            hp=self._stat_value(pokemon_payload["stats"], "hp"),
-            atk=self._stat_value(pokemon_payload["stats"], "attack"),
-            spatk=self._stat_value(pokemon_payload["stats"], "special-attack"),
-            deff=self._stat_value(pokemon_payload["stats"], "defense"),
-            spdef=self._stat_value(pokemon_payload["stats"], "special-defense"),
-            speed=self._stat_value(pokemon_payload["stats"], "speed"),
-        )
-
-        self.pokemon_species_repo.create_pokemon_species(species)
-        return self.pokemon_species_repo.get_pokemon_species_by_name(normalized_name)
-
-    def calculate_stats(self, pokemon_species, level: int, modifier: str | None):
-        normalized_modifier = (modifier or "").strip().lower()
-        increased_stat, decreased_stat = self.NATURE_MODIFIERS.get(normalized_modifier, (None, None))
-
-        calculated_stats = {
-            "hp": self._calculate_hp(pokemon_species.hp, level),
-            "atk": self._calculate_other_stat(pokemon_species.atk, level),
-            "def": self._calculate_other_stat(pokemon_species.deff, level),
-            "spAtk": self._calculate_other_stat(pokemon_species.spatk, level),
-            "spDef": self._calculate_other_stat(pokemon_species.spdef, level),
-            "speed": self._calculate_other_stat(pokemon_species.speed, level),
-        }
-
-        if increased_stat:
-            increased_key = self._response_key(increased_stat)
-            calculated_stats[increased_key] = int(calculated_stats[increased_key] * 1.1)
-
-        if decreased_stat:
-            decreased_key = self._response_key(decreased_stat)
-            calculated_stats[decreased_key] = int(calculated_stats[decreased_key] * 0.9)
-
-        return calculated_stats
-
-    def _get_or_create_types(self, type_entries):
-        ordered_entries = sorted(type_entries, key=lambda entry: entry["slot"])
         type_ids = []
+        for entry in sorted(pokemon_data["types"], key=lambda item: item["slot"]):
+            type_name = self.pretty_name(entry["type"]["name"])
+            pokemon_type = self.type_repo.get_type_by_name(type_name)
 
-        for entry in ordered_entries:
-            type_name = self._display_name(entry["type"]["name"])
-            the_type = self.type_repo.get_type_by_name(type_name)
-
-            if the_type is None:
+            if pokemon_type is None:
                 self.type_repo.create_type(Type(type_Id=None, name=type_name))
-                the_type = self.type_repo.get_type_by_name(type_name)
+                pokemon_type = self.type_repo.get_type_by_name(type_name)
 
-            type_ids.append(the_type.type_Id)
+            type_ids.append(pokemon_type.type_Id)
 
-        return type_ids
-
-    def _get_or_create_generation(self, generation_api_name: str):
         generation_name, region_name = self.GENERATION_REGION_MAP.get(
-            generation_api_name,
-            (self._display_name(generation_api_name), "Unknown"),
+            species_data["generation"]["name"],
+            (self.pretty_name(species_data["generation"]["name"]), "Unknown"),
         )
 
         region = self.region_repo.get_region_by_name(region_name)
@@ -160,9 +103,59 @@ class PokeApiHandler:
             )
             generation = self.generation_repo.get_generation_by_name(generation_name)
 
-        return generation.gen_Id
+        species = Pokemon_Species(
+            species_Id=None,
+            generation_Id=generation.gen_Id,
+            type_one_Id=type_ids[0],
+            type_two_Id=type_ids[1] if len(type_ids) > 1 else None,
+            species_name=species_name,
+            rarity=self.calculate_rarity(pokemon_data["stats"]),
+            hp=self.get_stat(pokemon_data["stats"], "hp"),
+            atk=self.get_stat(pokemon_data["stats"], "attack"),
+            spatk=self.get_stat(pokemon_data["stats"], "special-attack"),
+            deff=self.get_stat(pokemon_data["stats"], "defense"),
+            spdef=self.get_stat(pokemon_data["stats"], "special-defense"),
+            speed=self.get_stat(pokemon_data["stats"], "speed"),
+        )
 
-    def _fetch_json(self, url: str):
+        self.pokemon_species_repo.create_pokemon_species(species)
+        return self.pokemon_species_repo.get_pokemon_species_by_name(species_name)
+
+    def pick_valid_ability(self, ability_options, chosen_ability):
+        clean_choice = self.clean_compare_value(chosen_ability)
+
+        for ability in ability_options:
+            if self.clean_compare_value(ability) == clean_choice:
+                return ability
+
+        raise ValueError(f"{chosen_ability} is not a valid ability for this Pokemon")
+
+    def calculate_stats(self, pokemon_species, level, modifier):
+        boost_stat, lower_stat = self.NATURE_MODIFIERS.get(
+            (modifier or "").strip().lower(),
+            (None, None),
+        )
+
+        calculated = {
+            "hp": int(((2 * pokemon_species.hp) * level) / 100) + level + 10,
+            "atk": int(((2 * pokemon_species.atk) * level) / 100) + 5,
+            "def": int(((2 * pokemon_species.deff) * level) / 100) + 5,
+            "spAtk": int(((2 * pokemon_species.spatk) * level) / 100) + 5,
+            "spDef": int(((2 * pokemon_species.spdef) * level) / 100) + 5,
+            "speed": int(((2 * pokemon_species.speed) * level) / 100) + 5,
+        }
+
+        if boost_stat:
+            key_name = self.stat_key(boost_stat)
+            calculated[key_name] = int(calculated[key_name] * 1.1)
+
+        if lower_stat:
+            key_name = self.stat_key(lower_stat)
+            calculated[key_name] = int(calculated[key_name] * 0.9)
+
+        return calculated
+#methods from chat taht helps run smoothr
+    def fetch_json(self, url):
         try:
             api_request = request.Request(
                 url,
@@ -180,15 +173,14 @@ class PokeApiHandler:
             raise ValueError(f"Unable to reach PokeAPI for {url}: {reason}") from exc
 
     @staticmethod
-    def _stat_value(stats_payload, stat_name: str):
+    def get_stat(stats_payload, stat_name):
         for stat in stats_payload:
             if stat["stat"]["name"] == stat_name:
                 return stat["base_stat"]
-
         raise ValueError(f"Missing stat '{stat_name}' in PokeAPI payload")
 
     @staticmethod
-    def _determine_rarity(stats_payload):
+    def calculate_rarity(stats_payload):
         total_stats = sum(stat["base_stat"] for stat in stats_payload)
         if total_stats >= 600:
             return 5
@@ -201,43 +193,23 @@ class PokeApiHandler:
         return 1
 
     @staticmethod
-    def _normalize_name(name: str):
+    def clean_name(name):
         return name.strip().title()
 
     @staticmethod
-    def _display_name(name: str):
+    def pretty_name(name):
         return name.replace("-", " ").title()
 
-    @classmethod
-    def _extract_abilities(cls, pokemon_payload):
-        ability_options = []
-
-        for ability_entry in pokemon_payload["abilities"]:
-            ability_name = cls._display_name(ability_entry["ability"]["name"])
-            if ability_name not in ability_options:
-                ability_options.append(ability_name)
-
-        return ability_options
-
     @staticmethod
-    def _normalize_comparison_value(value: str):
+    def clean_compare_value(value):
         return value.strip().lower().replace("-", " ")
 
     @staticmethod
-    def _calculate_hp(base_stat: int, level: int):
-        return int(((2 * base_stat) * level) / 100) + level + 10
-
-    @staticmethod
-    def _calculate_other_stat(base_stat: int, level: int):
-        return int(((2 * base_stat) * level) / 100) + 5
-
-    @staticmethod
-    def _response_key(stat_name: str):
-        mapping = {
+    def stat_key(stat_name):
+        return {
             "atk": "atk",
             "def": "def",
             "spatk": "spAtk",
             "spdef": "spDef",
             "speed": "speed",
-        }
-        return mapping[stat_name]
+        }[stat_name]

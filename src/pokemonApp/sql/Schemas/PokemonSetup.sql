@@ -18,17 +18,12 @@ GO
 
 PRINT 'Recreating schema...';
 
----------------------------------------------------------
--- REGION
----------------------------------------------------------
+
 CREATE TABLE {{SCHEMA}}.Region (
     RegionId INT IDENTITY(1,1) PRIMARY KEY,
     RegionName NVARCHAR(50) NOT NULL UNIQUE
 );
 
----------------------------------------------------------
--- GENERATION
----------------------------------------------------------
 CREATE TABLE {{SCHEMA}}.Generation (
     GenId INT IDENTITY(1,1) PRIMARY KEY,
     RegionId INT NOT NULL,
@@ -36,17 +31,13 @@ CREATE TABLE {{SCHEMA}}.Generation (
     FOREIGN KEY (RegionId) REFERENCES {{SCHEMA}}.Region(RegionId)
 );
 
----------------------------------------------------------
--- TYPE
----------------------------------------------------------
+
 CREATE TABLE {{SCHEMA}}.[Type] (
     TypeId INT IDENTITY(1,1) PRIMARY KEY,
     [Name] NVARCHAR(30) NOT NULL UNIQUE
 );
 
----------------------------------------------------------
--- POKEMON SPECIES
----------------------------------------------------------
+
 CREATE TABLE {{SCHEMA}}.PokemonSpecies (
     SpeciesId INT IDENTITY(1,1) PRIMARY KEY,
     GenId INT NOT NULL,
@@ -65,9 +56,7 @@ CREATE TABLE {{SCHEMA}}.PokemonSpecies (
     FOREIGN KEY (TypeTwoId) REFERENCES {{SCHEMA}}.[Type](TypeId)
 );
 
----------------------------------------------------------
--- POKEMON
----------------------------------------------------------
+
 CREATE TABLE {{SCHEMA}}.Pokemon (
     PokedexId INT IDENTITY(1,1) PRIMARY KEY,
     SpeciesId INT NOT NULL,
@@ -77,9 +66,7 @@ CREATE TABLE {{SCHEMA}}.Pokemon (
     FOREIGN KEY (SpeciesId) REFERENCES {{SCHEMA}}.PokemonSpecies(SpeciesId)
 );
 
----------------------------------------------------------
--- USER
----------------------------------------------------------
+
 CREATE TABLE {{SCHEMA}}.[User] (
     UserId INT IDENTITY(1,1) PRIMARY KEY,
     UserName NVARCHAR(50) NOT NULL UNIQUE,
@@ -87,9 +74,7 @@ CREATE TABLE {{SCHEMA}}.[User] (
     Losses INT NOT NULL DEFAULT 0
 );
 
----------------------------------------------------------
--- TEAM
----------------------------------------------------------
+
 CREATE TABLE {{SCHEMA}}.Team (
     TeamId INT IDENTITY(1,1) PRIMARY KEY,
     UserId INT NOT NULL,
@@ -98,9 +83,7 @@ CREATE TABLE {{SCHEMA}}.Team (
     CONSTRAINT UQ_Team_UserName UNIQUE (UserId, TeamName)
 );
 
----------------------------------------------------------
--- TEAM MEMBER
----------------------------------------------------------
+
 CREATE TABLE {{SCHEMA}}.TeamMember (
     MemberId INT IDENTITY(1,1) PRIMARY KEY,
     TeamId INT NOT NULL,

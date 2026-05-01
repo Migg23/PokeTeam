@@ -69,7 +69,7 @@ class SqlTypeRepository(ITypeRepository):
             SELECT *
             FROM {self.executor.schema}.[Type] T
             WHERE LOWER(T.Name) = LOWER(%s)
-        """
+        """ #this was added as the type name was causing an erorr
 
         params = {"Name": type_name}
 
